@@ -15,29 +15,46 @@ class TestReport(unittest.TestCase):
     def test_set_backend_on_initialize(self):
         self.assertIsInstance(self.report.backend, type(tasklib.TaskWarrior()))
 
-    def test_set_end_date_of_report_type_datetime(self):
-        self.report.end = '1d'
-        self.assertIsInstance(self.report.end, type(datetime.datetime.now()))
+    def test_end_date_of_report_type_datetime(self):
+        self.assertIsInstance(self.report._end, type(datetime.datetime.now()))
 
     def test_end_date_of_report_difference(self):
-        report1 = Report('1d')
-        report1.end = '1d'
-        self.assertEqual(self.report.end - report1.end, datetime.timedelta(1))
+        self.assertEqual(self.report._end - self.report.start,
+                         datetime.timedelta(1))
 
     def test_set_start_date_of_report_type_datetime(self):
         self.report.start = '1d'
         self.assertIsInstance(self.report.start, type(datetime.datetime.now()))
 
     def test_start_date_of_report_difference(self):
-        self.assertEqual(self.report.end - self.report.start,
+        self.assertEqual(self.report._end - self.report.start,
                          datetime.timedelta(1))
+
+    def test_report_has_history(self):
+        self.assertIsInstance(self.report.backend.history, list)
 
 
 class TestKanbanReport(unittest.TestCase):
-    def test_kanban_report_object_an_be_created(self):
-        kanban_report = KanbanReport('1d')
-        self.assertIsInstance(kanban_report, type(KanbanReport('1d')))
+    def setUp(self):
+        self.report = KanbanReport('1d')
 
+    def test_kanban_report_object_can_be_created(self):
+        self.assertIsInstance(self.report, type(KanbanReport('1d')))
+
+    def test_report_has_kanban_states(self):
+        self.assertIsInstance(self.report.available_states, dict)
+
+    def test_report_has_kanban_states_order(self):
+        self.assertIsInstance(self.report.states_order, set)
+
+    def test_all_available_tests_are_ordered(self):
+        self.assertEqual(set(self.report.available_states.keys()),
+                         self.report.states_order)
+
+    def test_report_has_list_of_tasks_by_state(self):
+        for state in self.report.available_states.keys():
+            self.assertEqual(str(getattr(self.report, state).__class__),
+                             "<class 'tasklib.task.TaskQuerySet'>")
 
 if __name__ == '__main__':
     unittest.main()
