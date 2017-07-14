@@ -12,6 +12,9 @@ class Report():
         self._end = self.backend.convert_datetime_string('now')
         self.backend._get_history()
 
+        self.title = ''
+        self.content = {}
+
     @property
     def start(self):
         """Set up the start of the period to analyze. It must be a Taskwarrior
@@ -42,13 +45,14 @@ class KanbanReport(Report):
                                  'test': 'Testing', 'backlog': 'Backlog'}
         self.states_order = {'done', 'test', 'blocked', 'doing', 'todo',
                              'backlog'}
+        self.title = 'Kanban evolution since {}'.format(self.start.isoformat())
 
         for state in self.available_states.keys():
             self.get_tasks_of_state(state)
 
     def get_tasks_of_state(self, state):
-        '''Set a list of tasks that are in the selected state under
-        self.state'''
+        '''Set a list of tasks that are in the selected state under a dictionary
+        on self.state, where the keys are the projects'''
 
         if state != 'done':
             status = 'pending'

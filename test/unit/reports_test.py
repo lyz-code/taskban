@@ -1,4 +1,5 @@
 # import mock
+import pytest
 import tasklib
 import unittest
 import datetime
@@ -33,6 +34,17 @@ class TestReport(unittest.TestCase):
     def test_report_has_history(self):
         self.assertIsInstance(self.report.backend.history, list)
 
+    def test_report_has_report_attribute(self):
+        self.assertIsInstance(self.report.report, dict)
+
+    def test_report_report_has_title(self):
+        self.build()
+        self.assertIsInstance(self.report.report['title'], str)
+
+    def test_report_report_has_content(self, built_report):
+        self.build()
+        self.assertIsInstance(self.report.report['content'], set)
+
 
 class TestKanbanReport(unittest.TestCase):
     def setUp(self):
@@ -55,6 +67,7 @@ class TestKanbanReport(unittest.TestCase):
         for state in self.report.available_states.keys():
             self.assertEqual(str(getattr(self.report, state).__class__),
                              "<class 'tasklib.task.TaskQuerySet'>")
+
 
 if __name__ == '__main__':
     unittest.main()
