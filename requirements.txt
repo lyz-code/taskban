@@ -7,3 +7,4 @@ pytest-cov==2.5.1
 pytz==2017.2
 six==1.10.0
 tzlocal==1.4
+argcomplete

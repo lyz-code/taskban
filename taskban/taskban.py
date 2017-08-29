@@ -42,6 +42,7 @@ def config_env(argv):
     parser.add_argument("-f", "--rc_file", nargs='?',
                         default='~/." + main_file_name + "rc', type=str,
                         help='Use selected configuration file')
+    argcomplete.autocomplete(parser)
     args = parser.parse_args()
 
     # Yaml
@@ -69,7 +70,7 @@ def config_env(argv):
         logging.basicConfig(level=logging.WARNING,
                             format="  %(levelname)s %(message)s")
     log = logging.getLogger('Main')
-    
+
 
 def main(argv):
     config_env(argv)
