@@ -39,16 +39,34 @@ It won't try to replace the Taskwarrior
 ## Retro reports
 
 ### Kanban reports
-This reports will give the status of the kanban board for a specified period of
-time with the time spent in each task:
+This reports will give the status of the Kanban board for a specified period of
+time with the total time spent in each task:
 
-* With a specified period of time we'll print a section for each workflow state
-  of the tasks.
-* The user must give the period in a taskwarrior date format
-* For each section we'll print a list of tasks in that state with the amount of
-  time spent in that time for the specified period.
-* For the uncompleted tasks, we'll print a ratio of allocated time and total
-  spent time on the task.
+If not specified the `period` flag it will take the last day modified tasks.
+
+```bash
+taskban now
+```
+
+The `period` flag must be a taskwarrior time compatible string, for example if
+we want to see the information of the tasks modified last week we could use
+
+```bash
+taskban now -p 7d
+```
+Or
+```bash
+taskban now -p 1w
+```
+
+If you want to also show the backlog use the `-b` flag
+
+This report will give you the next information
+* *ID*: Task id, if it's completed it will show 0
+* *Est*: The number of hours estimated to complete the task
+* *Progress*: The percent of progress, between the total time spent in the task
+  and the estimate
+* *Description*: Description of the task
 
 ### Activity reports
 This reports will give the time spent in each task for a selected period of
@@ -63,3 +81,12 @@ time.
   the active time of the period
 
 ### Estimation reports
+
+# Todo
+
+## Tests
+* [ ] Write a mock of the `self.backend._get_history()` and
+  `self.backend.tasks.filter()`
+
+## Write snapshot
+* [ ] Write the snapshot to a file and save the history with a git repository

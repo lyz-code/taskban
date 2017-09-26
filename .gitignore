@@ -5,3 +5,6 @@ venv
 .*sw*
 .rope*
 start.py
+*egg-info
+build
+dist

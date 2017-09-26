@@ -8,3 +8,5 @@ pytz==2017.2
 six==1.10.0
 tzlocal==1.4
 argcomplete
+tabulate
+pyyaml
