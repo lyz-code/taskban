@@ -64,6 +64,7 @@ If you want to also show the backlog use the `-b` flag
 This report will give you the next information
 * *ID*: Task id, if it's completed it will show 0
 * *Est*: The number of hours estimated to complete the task
+* *Active*: The active time of the task in the specified period
 * *Progress*: The percent of progress, between the total time spent in the task
   and the estimate
 * *Description*: Description of the task

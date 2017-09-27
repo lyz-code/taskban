@@ -11,6 +11,7 @@ class Report():
         self.backend = tasklib.TaskWarrior(
             data_location=os.path.expanduser(data_location))
         self.start = start_date
+        self._start_tw_string = start_date
         self._end = self.backend.convert_datetime_string('now')
         self.backend._get_history()
         self.title = ''
@@ -29,6 +30,20 @@ class Report():
         self._start = self.backend.convert_datetime_string(
             'now - {}'.format(value))
 
+    def seconds_to_readable(self, seconds):
+        second = seconds % 60
+        minute = (seconds // 60) % 60
+        hour = (seconds // 3600) % 24
+        # days = (seconds // 86400)
+
+        return "{}:{}:{}".format(
+            self._number_to_2_digits(hour),
+            self._number_to_2_digits(minute),
+            self._number_to_2_digits(second))
+
+    def _number_to_2_digits(self, n):
+        return repr(round(n)).zfill(2)
+
 
 class KanbanReport(Report):
     """Kanban report, it represents the status of the board at the moment, with
@@ -46,8 +61,7 @@ class KanbanReport(Report):
                                  'test': 'Testing', 'backlog': 'Backlog'}
         self.states_order = ['done', 'test', 'blocked', 'doing', 'todo',
                              'backlog']
-        self.title = 'Kanban evolution at {}'.format(
-            datetime.datetime.now().isoformat())
+        self.title = 'Kanban evolution since {}'.format(self.start.isoformat())
         self.max_tasks_per_state = 10
         self.create_snapshot()
 
@@ -78,10 +92,12 @@ class KanbanReport(Report):
                 except KeyError:
                     self.snapshot[state][task['project']] = []
                 try:
-                    task['active_percent'] = \
+                    task['total_active_percent'] = \
                         round(100*task.active_time()/(task['est']*3600), 1)
                 except TypeError:
-                    task['active_percent'] = ' '
+                    task['total_active_percent'] = ''
+                task['active_time'] = \
+                    round(task.active_time(self._start_tw_string))
                 self.snapshot[state][task['project']].append(task)
 
         # Order the tasks
@@ -103,11 +119,16 @@ class KanbanReport(Report):
                 print('\n### {}'.format(project))
                 dataset = []
                 for task in self.snapshot[state][project]:
+                    if type(task['active_time']) is not int:
+                        import pdb; pdb.set_trace()  # XXX BREAKPOINT
                     dataset.append([task['id'],
                                     task['est'],
-                                    task['active_percent'],
+                                    self.seconds_to_readable(
+                                        task['active_time']),
+                                    task['total_active_percent'],
                                     task['description']])
                     if len(dataset) == self.max_tasks_per_state:
                         break
                 print(tabulate(dataset,
-                               headers=['ID', 'Est', 'Progress %', 'Description']))
+                               headers=['ID', 'Est', 'Active',
+                                        'Progress %', 'Description']))

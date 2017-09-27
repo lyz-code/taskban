@@ -1,4 +1,5 @@
 venv
+*pyc
 .cache
 .coverage
 *__pycache__*

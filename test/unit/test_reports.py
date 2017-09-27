@@ -39,10 +39,13 @@ class TestReport(unittest.TestCase):
     def test_report_report_has_content(self):
         self.assertIsInstance(self.report.content, dict)
 
+    def test_report_convert_seconds_to_readable(self):
+        self.assertEqual(self.report.seconds_to_readable(6162), '01:42:42')
+
 
 class TestKanbanReport(unittest.TestCase):
     def setUp(self):
-        self.report = KanbanReport('1d')
+        self.report = KanbanReport('7d')
 
     def test_kanban_report_object_can_be_created(self):
         self.assertIsInstance(self.report, type(KanbanReport('1d')))
@@ -51,16 +54,19 @@ class TestKanbanReport(unittest.TestCase):
         self.assertIsInstance(self.report.available_states, dict)
 
     def test_report_has_kanban_states_order(self):
-        self.assertIsInstance(self.report.states_order, set)
+        self.assertIsInstance(self.report.states_order, list)
 
     def test_all_available_tests_are_ordered(self):
         self.assertEqual(set(self.report.available_states.keys()),
-                         self.report.states_order)
+                         set(self.report.states_order))
 
-    def test_report_has_list_of_tasks_by_state(self):
-        for state in self.report.available_states.keys():
-            self.assertEqual(str(getattr(self.report, state).__class__),
-                             "<class 'tasklib.task.TaskQuerySet'>")
+    # def test_report_has_list_of_tasks_by_state(self):
+    #     for state in self.report.snapshot.keys():
+    #         for project in self.report.snapshot[state].keys():
+    #             self.assertEqual(
+    #                 str(getattr(
+    #                 self.report.snapshot[state], project).__class__),
+    #                 "<class 'tasklib.task.TaskQuerySet'>")
 
 if __name__ == '__main__':
     unittest.main()
