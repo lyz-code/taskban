@@ -34,7 +34,11 @@ It won't try to replace the Taskwarrior
 #### With a reason
 #### With a task id
 
-###
+### Add a task to an active sprint
+
+If I have to add another task outside the sprint planning, make the user select
+one of the other tasks so that the amount of estimated time is a constant
+inside to
 
 ## Retro reports
 

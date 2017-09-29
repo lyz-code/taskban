@@ -20,6 +20,9 @@ def load_parser():
     now_parser = subparser.add_parser('now')
     snapshot_parser = subparser.add_parser('snapshot')
 
+    parser.add_argument("-d", "--data", type=str, default='~/.task/',
+                        help='Taskwarrior data directory path')
+
     now_parser.add_argument("-p", "--period", type=str, default='1d',
                             help='Taskwarrior compatible date string')
     now_parser.add_argument("-b", "--backlog", action="store_true",
