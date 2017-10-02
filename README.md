@@ -29,6 +29,11 @@ It won't try to replace the Taskwarrior
 
 ### Add task to backlog
 
+### Start a task
+
+If there are more than X tasks in doing, force the user to switch some of them
+to blocked, todo or even backlog
+
 ### Block a task
 
 #### With a reason
