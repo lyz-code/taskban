@@ -9,6 +9,30 @@ In combination with [Taskwarrior](taskwarrior.org).
 
 It won't try to replace the Taskwarrior
 
+## Install
+
+You can use `pip`
+
+```bash
+pip install https://github.com/lyz-code/taskban/archive/v0.1.0.zip
+```
+
+Or clone the repository and install it
+
+```bash
+git clone https://github.com/lyz-code/taskban
+cd taskban
+pip install -r requirements.txt
+python3 setup.py install
+```
+
+## Test
+
+```bash
+pip install -r requirements-tests.txt
+pytest
+```
+
 ## Workflow
 
 ### Backlog

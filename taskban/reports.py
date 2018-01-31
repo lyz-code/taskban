@@ -1,19 +1,24 @@
 import os
 import tasklib
-import datetime
 from tabulate import tabulate
 
 
 class Report():
     """Abstract class to write reports"""
 
-    def __init__(self, start_date, data_location='~/.task'):
+    def __init__(
+        self,
+        start_date='1984y',
+        data_location='~/.task',
+        taskrc_location='~/.taskrc'
+    ):
         self.backend = tasklib.TaskWarrior(
-            data_location=os.path.expanduser(data_location))
+            data_location=os.path.expanduser(data_location),
+            taskrc_location=os.path.expanduser(taskrc_location),
+        )
         self.start = start_date
-        self._start_tw_string = start_date
+        self.backend.history.get_history()
         self._end = self.backend.convert_datetime_string('now')
-        self.backend._get_history()
         self.title = ''
         self.content = {}
 
@@ -28,7 +33,8 @@ class Report():
     @start.setter
     def start(self, value):
         self._start = self.backend.convert_datetime_string(
-            'now - {}'.format(value))
+            'now - {}'.format(value),
+        )
 
     def seconds_to_readable(self, seconds):
         second = seconds % 60
@@ -39,7 +45,8 @@ class Report():
         return "{}:{}:{}".format(
             self._number_to_2_digits(hour),
             self._number_to_2_digits(minute),
-            self._number_to_2_digits(second))
+            self._number_to_2_digits(second),
+        )
 
     def _number_to_2_digits(self, n):
         return repr(round(n)).zfill(2)
@@ -56,23 +63,40 @@ class KanbanReport(Report):
 
     def __init__(self, start_date, data_location='~/.task'):
         super(KanbanReport, self).__init__(start_date, data_location)
-        self.available_states = {'todo': 'To Do', 'doing': 'Doing',
-                                 'done': 'Done', 'blocked': 'Blocked',
-                                 'test': 'Testing', 'backlog': 'Backlog'}
-        self.states_order = ['done', 'test', 'blocked', 'doing', 'todo',
-                             'backlog']
+        self.available_states = {
+            'todo': 'To Do',
+            'doing': 'Doing',
+            'done': 'Done',
+            'blocked': 'Blocked',
+            'test': 'Testing',
+            'backlog': 'Backlog',
+        }
+        self.states_order = [
+            'done',
+            'test',
+            'blocked',
+            'doing',
+            'todo',
+            'backlog',
+        ]
         self.title = 'Kanban evolution since {}'.format(self.start.isoformat())
         self.max_tasks_per_state = 10
+        self._start_tw_string = start_date
         self.create_snapshot()
 
     def _get_tasks_of_state(self, state):
         '''Get a list of tasks that are in the selected state '''
         if state != 'done':
             return self.backend.tasks.filter(
-                status='pending', pm=state, modified__after=self.start)
+                status='pending',
+                pm=state,
+                modified__after=self.start,
+            )
         else:
             return self.backend.tasks.filter(
-                status='completed', modified__after=self.start)
+                status='completed',
+                modified__after=self.start,
+            )
 
     def create_snapshot(self):
         '''Create a snapshot of the current kanban board, save it on
@@ -119,8 +143,6 @@ class KanbanReport(Report):
                 print('\n### {}'.format(project))
                 dataset = []
                 for task in self.snapshot[state][project]:
-                    if type(task['active_time']) is not int:
-                        import pdb; pdb.set_trace()  # XXX BREAKPOINT
                     dataset.append([task['id'],
                                     task['est'],
                                     self.seconds_to_readable(
@@ -129,6 +151,15 @@ class KanbanReport(Report):
                                     task['description']])
                     if len(dataset) == self.max_tasks_per_state:
                         break
-                print(tabulate(dataset,
-                               headers=['ID', 'Est', 'Active',
-                                        'Progress %', 'Description']))
+                print(
+                    tabulate(
+                        dataset,
+                        headers=[
+                            'ID',
+                            'Est',
+                            'Active',
+                            'Progress %',
+                            'Description'
+                        ]
+                    )
+                )

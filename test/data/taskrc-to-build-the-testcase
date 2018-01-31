@@ -1,0 +1,8 @@
+data.location=.
+uda.pm.type=string
+uda.pm.label=Kanban
+uda.pm.values=todo,doing,done,blocked,test,backlog
+uda.pm.default=backlog
+
+history.cache=100y
+history.cache.location=history.cache
