@@ -67,13 +67,19 @@ class TestReport(unittest.TestCase):
         self.assertEqual(self.report.seconds_to_readable(6162), '01:42:42')
 
 
-@pytest.mark.skip()
 class TestKanbanReport(unittest.TestCase):
-    def setUp(self):
-        self.report = KanbanReport('7d')
 
-    def test_kanban_report_object_can_be_created(self):
-        self.assertIsInstance(self.report, type(KanbanReport('1d')))
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        shutil.rmtree(self.tmp)
+        shutil.copytree('test/data', self.tmp)
+        self.report = KanbanReport(
+            data_location=self.tmp,
+            taskrc_location=os.path.join(self.tmp, 'taskrc'),
+        )
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp)
 
     def test_report_has_kanban_states(self):
         self.assertIsInstance(self.report.available_states, dict)
@@ -92,6 +98,7 @@ class TestKanbanReport(unittest.TestCase):
     #                 str(getattr(
     #                 self.report.snapshot[state], project).__class__),
     #                 "<class 'tasklib.task.TaskQuerySet'>")
+
 
 if __name__ == '__main__':
     unittest.main()

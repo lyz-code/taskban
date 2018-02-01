@@ -61,8 +61,17 @@ class KanbanReport(Report):
 
     Each state is subdivided in projects"""
 
-    def __init__(self, start_date, data_location='~/.task'):
-        super(KanbanReport, self).__init__(start_date, data_location)
+    def __init__(
+        self,
+        start_date='1984y',
+        data_location='~/.task',
+        taskrc_location='~/.taskrc'
+    ):
+        super(KanbanReport, self).__init__(
+            start_date,
+            data_location,
+            taskrc_location,
+        )
         self.available_states = {
             'todo': 'To Do',
             'doing': 'Doing',
