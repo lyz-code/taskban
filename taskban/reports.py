@@ -1,3 +1,4 @@
+import re
 import os
 import tasklib
 from tabulate import tabulate
@@ -8,7 +9,7 @@ class Report():
 
     def __init__(
         self,
-        start_date='1984y',
+        start_date='1984-01-01',
         data_location='~/.task',
         taskrc_location='~/.taskrc'
     ):
@@ -32,9 +33,12 @@ class Report():
 
     @start.setter
     def start(self, value):
-        self._start = self.backend.convert_datetime_string(
-            'now - {}'.format(value),
-        )
+        if re.match('[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}', value):
+            datetime_string = value
+        else:
+            datetime_string = 'now - {}'.format(value)
+
+        self._start = self.backend.convert_datetime_string(datetime_string)
 
     def seconds_to_readable(self, seconds):
         second = seconds % 60
@@ -63,7 +67,7 @@ class KanbanReport(Report):
 
     def __init__(
         self,
-        start_date='1984y',
+        start_date='1984-01-01',
         data_location='~/.task',
         taskrc_location='~/.taskrc'
     ):

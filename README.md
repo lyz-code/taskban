@@ -87,9 +87,17 @@ we want to see the information of the tasks modified last week we could use
 ```bash
 taskban now -p 7d
 ```
+
 Or
+
 ```bash
 taskban now -p 1w
+```
+
+You can also use fixed dates
+
+```bash
+taskban now -p 1984-01-01
 ```
 
 If you want to also show the backlog use the `-b` flag

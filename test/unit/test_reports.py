@@ -39,9 +39,16 @@ class TestReport(unittest.TestCase):
             datetime.timedelta(1),
         )
 
-    def test_set_start_date_of_report_type_datetime(self):
+    def test_set_start_date_of_report_type_difference(self):
         self.report.start = '1d'
         self.assertIsInstance(self.report.start, type(datetime.datetime.now()))
+
+    def test_set_start_date_of_report_type_date(self):
+        self.report.start = '1984-01-01'
+        self.assertEqual(
+            self.report.start,
+            self.report.backend.convert_datetime_string('1984-01-01')
+        )
 
     def test_start_date_of_report_difference(self):
         self.report = Report(
@@ -91,13 +98,27 @@ class TestKanbanReport(unittest.TestCase):
         self.assertEqual(set(self.report.available_states.keys()),
                          set(self.report.states_order))
 
-    # def test_report_has_list_of_tasks_by_state(self):
-    #     for state in self.report.snapshot.keys():
-    #         for project in self.report.snapshot[state].keys():
-    #             self.assertEqual(
-    #                 str(getattr(
-    #                 self.report.snapshot[state], project).__class__),
-    #                 "<class 'tasklib.task.TaskQuerySet'>")
+    def test_report_has_max_tasks_per_state(self):
+        self.assertEqual(self.report.max_tasks_per_state, 10)
+
+    def test_report_can_get_tasks_of_state_backlog(self):
+        tasks = self.report._get_tasks_of_state('backlog')
+        import pdb; pdb.set_trace()  # XXX BREAKPOINT
+
+
+    @pytest.mark.skip()
+    def test_report_can_make_snapshot(self):
+        pass
+
+    @pytest.mark.skip()
+    def test_report_has_list_of_tasks_by_state(self):
+        for state in self.report.snapshot.keys():
+            for project in self.report.snapshot[state].keys():
+                self.assertEqual(
+                    str(getattr(
+                        self.report.snapshot[state], project
+                    ).__class__),
+                    "<class 'tasklib.task.TaskQuerySet'>")
 
 
 if __name__ == '__main__':
