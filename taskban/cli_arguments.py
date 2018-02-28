@@ -13,14 +13,14 @@ def load_parser():
     parser = argparse.ArgumentParser(
         description=" Implement my Kanban workflow with Taskwarrior")
     group = parser.add_mutually_exclusive_group()
-    group.add_argument("-v", "--verbose", action="store_true")
+    group.add_argument("-v", "--verbose", action="count")
     group.add_argument("-q", "--quiet", action="store_true")
 
     subparser = parser.add_subparsers(dest='subcommand', help='subcommands')
     now_parser = subparser.add_parser('now')
     snapshot_parser = subparser.add_parser('snapshot')
 
-    parser.add_argument("-d", "--data", type=str, default='~/.task/',
+    parser.add_argument("-d", "--data_location", type=str, default='~/.task/',
                         help='Taskwarrior data directory path')
 
     now_parser.add_argument("-p", "--period", type=str, default='1d',

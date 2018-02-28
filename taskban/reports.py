@@ -1,5 +1,6 @@
 import re
 import os
+import sys
 import tasklib
 from tabulate import tabulate
 
@@ -143,17 +144,17 @@ class KanbanReport(Report):
                 self.snapshot[state][project] = sorted(
                     self.snapshot[state][project], key=lambda k: k['urgency'])
 
-    def print_report(self, show_backlog=True):
+    def print_report(self, out=sys.stdout, show_backlog=True):
         '''Print the report'''
-        print('# {}'.format(self.title))
+        out.write('# {}'.format(self.title))
 
         for state in self.states_order:
             if state not in self.snapshot.keys() or \
                (state == 'backlog' and show_backlog is False):
                 continue
-            print('\n## {}'.format(state))
+            out.write('\n\n## {}'.format(state))
             for project in self.snapshot[state].keys():
-                print('\n### {}'.format(project))
+                out.write('\n\n### {}\n\n'.format(project))
                 dataset = []
                 for task in self.snapshot[state][project]:
                     dataset.append([task['id'],
@@ -164,7 +165,7 @@ class KanbanReport(Report):
                                     task['description']])
                     if len(dataset) == self.max_tasks_per_state:
                         break
-                print(
+                out.write(
                     tabulate(
                         dataset,
                         headers=[

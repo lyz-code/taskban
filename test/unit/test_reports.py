@@ -1,4 +1,3 @@
-# import mock
 import os
 import shutil
 import pytest
@@ -6,7 +5,62 @@ import tasklib
 import unittest
 import datetime
 import tempfile
+from io import StringIO
 from taskban.reports import KanbanReport, Report
+from taskban.cli_arguments import load_parser
+
+
+class ParserTest(unittest.TestCase):
+    def setUp(self):
+        self.parser = load_parser()
+
+    def test_verbose(self):
+        parsed = self.parser.parse_args(['-v'])
+        self.assertEqual(parsed.verbose, 1)
+
+    def test_really_verbose(self):
+        parsed = self.parser.parse_args(['-vv'])
+        self.assertEqual(parsed.verbose, 2)
+
+    def test_quiet(self):
+        parsed = self.parser.parse_args(['-q'])
+        self.assertTrue(parsed.quiet)
+
+    def test_can_specify_taskwarrior_data_path(self):
+        parsed = self.parser.parse_args(['-d', '~/task/path'])
+        self.assertEqual(parsed.data_location, '~/task/path')
+
+    def test_has_subcommand_now(self):
+        parsed = self.parser.parse_args(['now'])
+        self.assertEqual(parsed.subcommand, 'now')
+
+    def test_now_default_period(self):
+        parsed = self.parser.parse_args(['now'])
+        self.assertEqual(parsed.period, '1d')
+
+    def test_now_can_specify_period(self):
+        parsed = self.parser.parse_args(['now', '-p', '2d'])
+        self.assertEqual(parsed.period, '2d')
+
+    def test_now_can_specify_backlog(self):
+        parsed = self.parser.parse_args(['now', '-b'])
+        self.assertTrue(parsed.backlog)
+
+    def test_now_backlog_not_shown_by_default(self):
+        parsed = self.parser.parse_args(['now'])
+        self.assertFalse(parsed.backlog)
+
+    def test_has_subcommand_snapshot(self):
+        parsed = self.parser.parse_args(['snapshot'])
+        self.assertEqual(parsed.subcommand, 'snapshot')
+
+    def test_snapshot_default_period(self):
+        parsed = self.parser.parse_args(['snapshot'])
+        self.assertEqual(parsed.period, '100y')
+
+    def test_snapshot_can_specify_period(self):
+        parsed = self.parser.parse_args(['snapshot', '-p', '2d'])
+        self.assertEqual(parsed.period, '2d')
 
 
 class TestReport(unittest.TestCase):
@@ -103,22 +157,45 @@ class TestKanbanReport(unittest.TestCase):
 
     def test_report_can_get_tasks_of_state_backlog(self):
         tasks = self.report._get_tasks_of_state('backlog')
-        import pdb; pdb.set_trace()  # XXX BREAKPOINT
+        self.assertTrue(str(tasks[0]) == 'Backlog task 1')
+        self.assertTrue(str(tasks[1]) == 'Backlog task 2')
+        self.assertTrue(str(tasks[2]) == 'Backlog task 3')
 
+    def test_report_can_get_tasks_of_state_done(self):
+        tasks = self.report._get_tasks_of_state('done')
+        self.assertTrue(str(tasks[0]) == 'Done task 1')
 
-    @pytest.mark.skip()
     def test_report_can_make_snapshot(self):
-        pass
+        self.assertTrue(
+            str(self.report.snapshot['test']['my-second-project'][0]),
+            'Testing task 1',
+        )
+        self.assertTrue(
+            str(self.report.snapshot['todo']['my-first-project'][0]),
+            'Todo task 3',
+        )
+        self.assertTrue(
+            str(self.report.snapshot['doing']['my-second-project'][0]),
+            'Doing task 2',
+        )
+        self.assertTrue(
+            str(self.report.snapshot['backlog']['my-second-project'][0]),
+            'Backlog task 3',
+        )
+
+    @pytest.mark.skip(
+        reason="difficult to test prints, I leave the work started in case"
+        "anyone wants to continue")
+    def test_report_can_print_report(self):
+        out = StringIO()
+        self.report.print_report(out=out)
+        output = out.getvalue().strip()
+        with open('test/data/taskban_report_sample', 'r') as f:
+            self.assertEqual(output, f.read())
 
     @pytest.mark.skip()
-    def test_report_has_list_of_tasks_by_state(self):
-        for state in self.report.snapshot.keys():
-            for project in self.report.snapshot[state].keys():
-                self.assertEqual(
-                    str(getattr(
-                        self.report.snapshot[state], project
-                    ).__class__),
-                    "<class 'tasklib.task.TaskQuerySet'>")
+    def test_skip(self):
+        pass
 
 
 if __name__ == '__main__':

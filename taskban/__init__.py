@@ -26,7 +26,7 @@ def main():
     log = load_logger(args)
     config = load_config(log)
 
-    report = KanbanReport(args.period, data_location=args.data)
+    report = KanbanReport(args.period, data_location=args.data_location)
     if args.subcommand == 'now':
         report.print_report(args.backlog)
 
