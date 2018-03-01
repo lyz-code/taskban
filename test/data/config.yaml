@@ -1,0 +1,22 @@
+# Taskwarrior configuration
+task_data_path: ~/.task
+taskrc_path: ~/.taskrc
+
+# Taskban configuration
+start_date: '1984-01-01'
+max_tasks_per_state: 10
+available_states:
+  todo: To Do
+  doing: Doing
+  done: Done
+  blocked: Blocked
+  test: Testing
+  backlog: Backlog
+
+states_order:
+  - done
+  - test
+  - blocked
+  - doing
+  - todo
+  - backlog

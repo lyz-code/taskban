@@ -1,8 +1,13 @@
-import re
 import os
+import re
 import sys
+import yaml
 import tasklib
+import logging
+import datetime
 from tabulate import tabulate
+
+log = logging.getLogger('Main')
 
 
 class Report():
@@ -10,19 +15,50 @@ class Report():
 
     def __init__(
         self,
-        start_date='1984-01-01',
-        data_location='~/.task',
-        taskrc_location='~/.taskrc'
+        start_date=None,
+        task_data_path=None,
+        taskrc_path=None,
+        config_path='~/.local/share/taskban/config.yaml',
     ):
-        self.backend = tasklib.TaskWarrior(
-            data_location=os.path.expanduser(data_location),
-            taskrc_location=os.path.expanduser(taskrc_location),
+        self.load_config(config_path)
+        self.update_config_with_arguments(
+            start_date,
+            task_data_path,
+            taskrc_path,
+            config_path,
         )
-        self.start = start_date
+        self.backend = tasklib.TaskWarrior(
+            data_location=os.path.expanduser(task_data_path),
+            taskrc_location=os.path.expanduser(taskrc_path),
+        )
+        self.start = self.config['start_date']
         self.backend.history.get_history()
         self._end = self.backend.convert_datetime_string('now')
         self.title = ''
         self.content = {}
+
+    def load_config(self, config_path):
+        try:
+            with open(os.path.expanduser(config_path), 'r') as f:
+                try:
+                    self.config = yaml.safe_load(f)
+                except yaml.YAMLError as e:
+                    log.error(e)
+                    raise
+        except FileNotFoundError as e:
+            log.warning('Error opening config file {}'.format(config_path))
+
+    def update_config_with_arguments(
+        self,
+        start_date,
+        task_data_path,
+        taskrc_path,
+        config_path,
+    ):
+        arguments = locals()
+        for argument, value in arguments.items():
+            if value is not None:
+                self.config[argument] = value
 
     @property
     def start(self):
@@ -34,7 +70,9 @@ class Report():
 
     @start.setter
     def start(self, value):
-        if re.match('[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}', value):
+        if isinstance(value, datetime.date):
+            datetime_string = value.strftime('%Y-%m-%dT%H:%M:%S')
+        elif re.match('[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}', value):
             datetime_string = value
         else:
             datetime_string = 'now - {}'.format(value)
@@ -68,34 +106,21 @@ class KanbanReport(Report):
 
     def __init__(
         self,
-        start_date='1984-01-01',
-        data_location='~/.task',
-        taskrc_location='~/.taskrc'
+        start_date=None,
+        task_data_path=None,
+        taskrc_path=None,
+        config_path=None,
     ):
+
         super(KanbanReport, self).__init__(
             start_date,
-            data_location,
-            taskrc_location,
+            task_data_path,
+            taskrc_path,
+            config_path,
         )
-        self.available_states = {
-            'todo': 'To Do',
-            'doing': 'Doing',
-            'done': 'Done',
-            'blocked': 'Blocked',
-            'test': 'Testing',
-            'backlog': 'Backlog',
-        }
-        self.states_order = [
-            'done',
-            'test',
-            'blocked',
-            'doing',
-            'todo',
-            'backlog',
-        ]
+
         self.title = 'Kanban evolution since {}'.format(self.start.isoformat())
-        self.max_tasks_per_state = 10
-        self._start_tw_string = start_date
+        self._start_tw_string = self.config['start_date']
         self.create_snapshot()
 
     def _get_tasks_of_state(self, state):
@@ -119,7 +144,7 @@ class KanbanReport(Report):
 
         # Extract the tasks
         self.snapshot = {}
-        for state in self.available_states.keys():
+        for state in self.config['available_states'].keys():
             for task in self._get_tasks_of_state(state):
                 try:
                     self.snapshot[state]
@@ -148,7 +173,7 @@ class KanbanReport(Report):
         '''Print the report'''
         out.write('# {}'.format(self.title))
 
-        for state in self.states_order:
+        for state in self.config['states_order']:
             if state not in self.snapshot.keys() or \
                (state == 'backlog' and show_backlog is False):
                 continue
@@ -163,7 +188,7 @@ class KanbanReport(Report):
                                         task['active_time']),
                                     task['total_active_percent'],
                                     task['description']])
-                    if len(dataset) == self.max_tasks_per_state:
+                    if len(dataset) == self.config['max_tasks_per_state']:
                         break
                 out.write(
                     tabulate(

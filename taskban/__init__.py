@@ -17,18 +17,18 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from taskban.reports import KanbanReport
-from taskban.cli_arguments import load_logger, load_parser, load_config
+from taskban.cli_arguments import load_logger, load_parser
 
 
 def main():
     parser = load_parser()
     args = parser.parse_args()
-    log = load_logger(args)
-    config = load_config(log)
+    load_logger(args)
 
-    report = KanbanReport(args.period, data_location=args.data_location)
+    report = KanbanReport(args.period, task_data_path=args.task_data_path)
     if args.subcommand == 'now':
         report.print_report(args.backlog)
+
 
 if __name__ == "__main__":
     main()

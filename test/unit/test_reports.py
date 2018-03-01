@@ -5,7 +5,6 @@ import tasklib
 import unittest
 import datetime
 import tempfile
-from io import StringIO
 from taskban.reports import KanbanReport, Report
 from taskban.cli_arguments import load_parser
 
@@ -28,7 +27,7 @@ class ParserTest(unittest.TestCase):
 
     def test_can_specify_taskwarrior_data_path(self):
         parsed = self.parser.parse_args(['-d', '~/task/path'])
-        self.assertEqual(parsed.data_location, '~/task/path')
+        self.assertEqual(parsed.task_data_path, '~/task/path')
 
     def test_has_subcommand_now(self):
         parsed = self.parser.parse_args(['now'])
@@ -68,13 +67,56 @@ class TestReport(unittest.TestCase):
         self.tmp = tempfile.mkdtemp()
         shutil.rmtree(self.tmp)
         shutil.copytree('test/data', self.tmp)
+        self.config_path = os.path.join(self.tmp, 'config.yaml')
         self.report = Report(
-            data_location=self.tmp,
-            taskrc_location=os.path.join(self.tmp, 'taskrc'),
+            task_data_path=self.tmp,
+            taskrc_path=os.path.join(self.tmp, 'taskrc'),
+            config_path=self.config_path,
         )
 
     def tearDown(self):
         shutil.rmtree(self.tmp)
+
+    def test_report_default_config(self):
+        desired_config = {
+            'task_data_path': '~/.task',
+            'taskrc_path': '~/.taskrc',
+            'start_date': '1984-01-01',
+            'max_tasks_per_state': 10,
+            'available_states': {
+                'todo': 'To Do',
+                'doing': 'Doing',
+                'done': 'Done',
+                'blocked': 'Blocked',
+                'test': 'Testing',
+                'backlog': 'Backlog',
+            },
+            'states_order': [
+                'done',
+                'test',
+                'blocked',
+                'doing',
+                'todo',
+                'backlog',
+            ],
+        }
+        self.report.load_config(self.config_path)
+        self.assertEqual(
+            self.report.config,
+            desired_config,
+        )
+
+    def test_update_config_values(self):
+        self.report.update_config_with_arguments(
+            start_date='new_start',
+            task_data_path='new_data_path',
+            taskrc_path='new_taskrc_path',
+            config_path='new_config_path',
+        )
+        self.assertEqual(self.report.config['start_date'], 'new_start')
+        self.assertEqual(self.report.config['task_data_path'], 'new_data_path')
+        self.assertEqual(self.report.config['taskrc_path'], 'new_taskrc_path')
+        self.assertEqual(self.report.config['config_path'], 'new_config_path')
 
     def test_set_backend_on_initialize(self):
         self.assertIsInstance(self.report.backend, type(tasklib.TaskWarrior()))
@@ -85,8 +127,9 @@ class TestReport(unittest.TestCase):
     def test_end_date_of_report_difference(self):
         self.report = Report(
             '1d',
-            data_location=self.tmp,
-            taskrc_location=os.path.join(self.tmp, 'taskrc'),
+            task_data_path=self.tmp,
+            taskrc_path=os.path.join(self.tmp, 'taskrc'),
+            config_path=self.config_path,
         )
         self.assertEqual(
             self.report._end - self.report.start,
@@ -107,8 +150,9 @@ class TestReport(unittest.TestCase):
     def test_start_date_of_report_difference(self):
         self.report = Report(
             '1d',
-            data_location=self.tmp,
-            taskrc_location=os.path.join(self.tmp, 'taskrc'),
+            task_data_path=self.tmp,
+            taskrc_path=os.path.join(self.tmp, 'taskrc'),
+            config_path=self.config_path,
         )
         self.assertEqual(
             self.report._end - self.report.start,
@@ -135,25 +179,26 @@ class TestKanbanReport(unittest.TestCase):
         shutil.rmtree(self.tmp)
         shutil.copytree('test/data', self.tmp)
         self.report = KanbanReport(
-            data_location=self.tmp,
-            taskrc_location=os.path.join(self.tmp, 'taskrc'),
+            task_data_path=self.tmp,
+            taskrc_path=os.path.join(self.tmp, 'taskrc'),
+            config_path=os.path.join(self.tmp, 'config.yaml'),
         )
 
     def tearDown(self):
         shutil.rmtree(self.tmp)
 
     def test_report_has_kanban_states(self):
-        self.assertIsInstance(self.report.available_states, dict)
+        self.assertIsInstance(self.report.config['available_states'], dict)
 
     def test_report_has_kanban_states_order(self):
-        self.assertIsInstance(self.report.states_order, list)
+        self.assertIsInstance(self.report.config['states_order'], list)
 
     def test_all_available_tests_are_ordered(self):
-        self.assertEqual(set(self.report.available_states.keys()),
-                         set(self.report.states_order))
+        self.assertEqual(set(self.report.config['available_states'].keys()),
+                         set(self.report.config['states_order']))
 
     def test_report_has_max_tasks_per_state(self):
-        self.assertEqual(self.report.max_tasks_per_state, 10)
+        self.assertEqual(self.report.config['max_tasks_per_state'], 10)
 
     def test_report_can_get_tasks_of_state_backlog(self):
         tasks = self.report._get_tasks_of_state('backlog')
@@ -183,15 +228,16 @@ class TestKanbanReport(unittest.TestCase):
             'Backlog task 3',
         )
 
-    @pytest.mark.skip(
-        reason="difficult to test prints, I leave the work started in case"
-        "anyone wants to continue")
-    def test_report_can_print_report(self):
-        out = StringIO()
-        self.report.print_report(out=out)
-        output = out.getvalue().strip()
-        with open('test/data/taskban_report_sample', 'r') as f:
-            self.assertEqual(output, f.read())
+    # @pytest.mark.skip(
+    #     reason="difficult to test prints, I leave the work started in case"
+    #     "anyone wants to continue")
+    # def test_report_can_print_report(self):
+    #     from io import StringIO
+    #     out = StringIO()
+    #     self.report.print_report(out=out)
+    #     output = out.getvalue().strip()
+    #     with open('test/data/taskban_report_sample', 'r') as f:
+    #         self.assertEqual(output, f.read())
 
     @pytest.mark.skip()
     def test_skip(self):
