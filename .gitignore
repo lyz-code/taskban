@@ -1,2 +1,12 @@
+venv
+*pyc
+.cache
+.coverage
+*__pycache__*
 .*sw*
-.rope*venv
+.rope*
+start.py
+*egg-info
+build
+dist
+
