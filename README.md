@@ -5,19 +5,12 @@ The program will be used for:
 * Task mangling
 * Retro reports
 
-In combination with [Taskwarrior](taskwarrior.org).
-
-It won't try to replace the Taskwarrior
+It works in combination with [Taskwarrior](taskwarrior.org) so it won't try to
+replace it.
 
 ## Install
 
-You can use `pip`
-
-```bash
-pip install https://github.com/lyz-code/taskban/archive/v0.1.0.zip
-```
-
-Or clone the repository and install it
+Clone the repository and install it
 
 ```bash
 git clone https://github.com/lyz-code/taskban
@@ -33,45 +26,10 @@ pip install -r requirements-tests.txt
 pytest
 ```
 
-## Workflow
-
-### Backlog
-
-### Todo
-
-### Doing
-
-### Blocked
-
-### Test
-
-### Done
-
-## Sprint planning
-
-## Task mangling
-
-### Add task to backlog
-
-### Start a task
-
-If there are more than X tasks in doing, force the user to switch some of them
-to blocked, todo or even backlog
-
-### Block a task
-
-#### With a reason
-#### With a task id
-
-### Add a task to an active sprint
-
-If I have to add another task outside the sprint planning, make the user select
-one of the other tasks so that the amount of estimated time is a constant
-inside to
-
 ## Retro reports
 
 ### Kanban reports
+
 This reports will give the status of the Kanban board for a specified period of
 time with the total time spent in each task:
 
@@ -111,6 +69,7 @@ This report will give you the next information
 * *Description*: Description of the task
 
 ### Activity reports
+
 This reports will give the time spent in each task for a selected period of
 time.
 
@@ -124,11 +83,25 @@ time.
 
 ### Estimation reports
 
-# Todo
 
-## Tests
-* [ ] Write a mock of the `self.backend._get_history()` and
-  `self.backend.tasks.filter()`
+## Sprint planning
 
-## Write snapshot
-* [ ] Write the snapshot to a file and save the history with a git repository
+## Task mangling
+
+### Add task to backlog
+
+### Start a task
+
+If there are more than X tasks in doing, force the user to switch some of them
+to blocked, todo or even backlog
+
+### Block a task
+
+#### With a reason
+#### With a task id
+
+### Add a task to an active sprint
+
+If I have to add another task outside the sprint planning, make the user select
+one of the other tasks so that the amount of estimated time is a constant
+inside to

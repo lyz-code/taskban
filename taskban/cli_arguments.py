@@ -17,8 +17,28 @@ def load_parser():
     now_parser = subparser.add_parser('now')
     snapshot_parser = subparser.add_parser('snapshot')
 
-    parser.add_argument("-d", "--task_data_path", type=str, default='~/.task/',
-                        help='Taskwarrior data directory path')
+    parser.add_argument(
+        "-d",
+        "--task_data_path",
+        type=str,
+        default='~/.task/',
+        help='Taskwarrior data directory path',
+    )
+
+    parser.add_argument(
+        "--taskrc_path",
+        type=str,
+        default='~/.taskrc',
+        help='Taskwarrior data directory path',
+    )
+
+    parser.add_argument(
+        "-f",
+        "--config_path",
+        type=str,
+        default='~/.local/share/taskban/config.yaml',
+        help='Taskwarrior data directory path',
+    )
 
     now_parser.add_argument("-p", "--period", type=str, default='1d',
                             help='Taskwarrior compatible date string')

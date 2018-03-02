@@ -25,7 +25,12 @@ def main():
     args = parser.parse_args()
     load_logger(args)
 
-    report = KanbanReport(args.period, task_data_path=args.task_data_path)
+    report = KanbanReport(
+        start_date=args.period,
+        task_data_path=args.task_data_path,
+        taskrc_path=args.taskrc_path,
+        config_path=args.config_path,
+    )
     if args.subcommand == 'now':
         report.print_report(args.backlog)
 

@@ -39,6 +39,7 @@ class Report():
 
     def load_config(self, config_path):
         try:
+
             with open(os.path.expanduser(config_path), 'r') as f:
                 try:
                     self.config = yaml.safe_load(f)
@@ -46,7 +47,8 @@ class Report():
                     log.error(e)
                     raise
         except FileNotFoundError as e:
-            log.warning('Error opening config file {}'.format(config_path))
+            log.error('Error opening config file {}'.format(config_path))
+            raise
 
     def update_config_with_arguments(
         self,
@@ -77,6 +79,7 @@ class Report():
         else:
             datetime_string = 'now - {}'.format(value)
 
+        self._start_tw_string = datetime_string
         self._start = self.backend.convert_datetime_string(datetime_string)
 
     def seconds_to_readable(self, seconds):
@@ -120,7 +123,6 @@ class KanbanReport(Report):
         )
 
         self.title = 'Kanban evolution since {}'.format(self.start.isoformat())
-        self._start_tw_string = self.config['start_date']
         self.create_snapshot()
 
     def _get_tasks_of_state(self, state):
@@ -169,7 +171,7 @@ class KanbanReport(Report):
                 self.snapshot[state][project] = sorted(
                     self.snapshot[state][project], key=lambda k: k['urgency'])
 
-    def print_report(self, out=sys.stdout, show_backlog=True):
+    def print_report(self, show_backlog=True, out=sys.stdout):
         '''Print the report'''
         out.write('# {}'.format(self.title))
 

@@ -29,6 +29,22 @@ class ParserTest(unittest.TestCase):
         parsed = self.parser.parse_args(['-d', '~/task/path'])
         self.assertEqual(parsed.task_data_path, '~/task/path')
 
+    def test_now_default_taskwarrior_data_path(self):
+        parsed = self.parser.parse_args()
+        self.assertEqual(parsed.task_data_path, '~/.task/')
+
+    def test_can_specify_taskwarrior_config_path(self):
+        parsed = self.parser.parse_args(['--taskrc_path', '~/task/path'])
+        self.assertEqual(parsed.taskrc_path, '~/task/path')
+
+    def test_now_default_taskwarrior_config_path(self):
+        parsed = self.parser.parse_args()
+        self.assertEqual(parsed.taskrc_path, '~/.taskrc')
+
+    def test_can_specify_taskban_config_path(self):
+        parsed = self.parser.parse_args(['-f', '~/task/path'])
+        self.assertEqual(parsed.config_path, '~/task/path')
+
     def test_has_subcommand_now(self):
         parsed = self.parser.parse_args(['now'])
         self.assertEqual(parsed.subcommand, 'now')
@@ -131,9 +147,19 @@ class TestReport(unittest.TestCase):
             taskrc_path=os.path.join(self.tmp, 'taskrc'),
             config_path=self.config_path,
         )
+
+        self.assertEqual((self.report._end - self.report.start).days, 1)
+
+    def test_start_tw_string_has_now_when_start_is_a_string(self):
+        self.report = Report(
+            start_date='1d',
+            task_data_path=self.tmp,
+            taskrc_path=os.path.join(self.tmp, 'taskrc'),
+            config_path=self.config_path,
+        )
         self.assertEqual(
-            self.report._end - self.report.start,
-            datetime.timedelta(1),
+            self.report._start_tw_string,
+            'now - 1d',
         )
 
     def test_set_start_date_of_report_type_difference(self):
