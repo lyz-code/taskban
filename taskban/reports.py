@@ -72,9 +72,7 @@ class Report():
 
     @start.setter
     def start(self, value):
-        if isinstance(value, datetime.date):
-            datetime_string = value.strftime('%Y-%m-%dT%H:%M:%S')
-        elif re.match('[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}', value):
+        if re.match('[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}', value):
             datetime_string = value
         else:
             datetime_string = 'now - {}'.format(value)

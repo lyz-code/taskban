@@ -30,7 +30,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parsed.task_data_path, '~/task/path')
 
     def test_now_default_taskwarrior_data_path(self):
-        parsed = self.parser.parse_args()
+        parsed = self.parser.parse_args('')
         self.assertEqual(parsed.task_data_path, '~/.task/')
 
     def test_can_specify_taskwarrior_config_path(self):
@@ -38,7 +38,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parsed.taskrc_path, '~/task/path')
 
     def test_now_default_taskwarrior_config_path(self):
-        parsed = self.parser.parse_args()
+        parsed = self.parser.parse_args('')
         self.assertEqual(parsed.taskrc_path, '~/.taskrc')
 
     def test_can_specify_taskban_config_path(self):
