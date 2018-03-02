@@ -173,7 +173,13 @@ class KanbanReport(Report):
 
     def print_report(self, show_backlog=True, out=sys.stdout):
         '''Print the report'''
-        out.write('# {}'.format(self.title))
+        out.write(
+            '# {}'
+            '\n\nWarning! Displaying Active time for the selected period but'
+            '\nthe Progress is of all the time, so they might mismatch'.format(
+                self.title,
+            ),
+        )
 
         for state in self.config['states_order']:
             if state not in self.snapshot.keys() or \
@@ -204,3 +210,4 @@ class KanbanReport(Report):
                         ]
                     )
                 )
+        out.write('\n')
