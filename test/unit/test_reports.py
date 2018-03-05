@@ -14,36 +14,40 @@ class ParserTest(unittest.TestCase):
         self.parser = load_parser()
 
     def test_verbose(self):
-        parsed = self.parser.parse_args(['-v'])
+        parsed = self.parser.parse_args(['-v', 'now'])
         self.assertEqual(parsed.verbose, 1)
 
     def test_really_verbose(self):
-        parsed = self.parser.parse_args(['-vv'])
+        parsed = self.parser.parse_args(['-vv', 'now'])
         self.assertEqual(parsed.verbose, 2)
 
     def test_quiet(self):
-        parsed = self.parser.parse_args(['-q'])
+        parsed = self.parser.parse_args(['-q', 'now'])
         self.assertTrue(parsed.quiet)
 
     def test_can_specify_taskwarrior_data_path(self):
-        parsed = self.parser.parse_args(['-d', '~/task/path'])
+        parsed = self.parser.parse_args(['-d', '~/task/path', 'now'])
         self.assertEqual(parsed.task_data_path, '~/task/path')
 
     def test_now_default_taskwarrior_data_path(self):
-        parsed = self.parser.parse_args('')
+        parsed = self.parser.parse_args(['now'])
         self.assertEqual(parsed.task_data_path, '~/.task/')
 
     def test_can_specify_taskwarrior_config_path(self):
-        parsed = self.parser.parse_args(['--taskrc_path', '~/task/path'])
+        parsed = self.parser.parse_args(['--taskrc_path', '~/task/path', 'now'])
         self.assertEqual(parsed.taskrc_path, '~/task/path')
 
     def test_now_default_taskwarrior_config_path(self):
-        parsed = self.parser.parse_args('')
+        parsed = self.parser.parse_args(['now'])
         self.assertEqual(parsed.taskrc_path, '~/.taskrc')
 
     def test_can_specify_taskban_config_path(self):
-        parsed = self.parser.parse_args(['-f', '~/task/path'])
+        parsed = self.parser.parse_args(['-f', '~/task/path', 'now'])
         self.assertEqual(parsed.config_path, '~/task/path')
+
+    def test_subcommand_is_required(self):
+        with self.assertRaises(SystemExit):
+            self.parser.parse_args('')
 
     def test_has_subcommand_now(self):
         parsed = self.parser.parse_args(['now'])

@@ -4,7 +4,6 @@ import sys
 import yaml
 import tasklib
 import logging
-import datetime
 from tabulate import tabulate
 
 log = logging.getLogger('Main')

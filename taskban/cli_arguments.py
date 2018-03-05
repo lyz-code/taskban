@@ -14,6 +14,7 @@ def load_parser():
     group.add_argument("-q", "--quiet", action="store_true")
 
     subparser = parser.add_subparsers(dest='subcommand', help='subcommands')
+    subparser.required = True
     now_parser = subparser.add_parser('now')
     snapshot_parser = subparser.add_parser('snapshot')
 
