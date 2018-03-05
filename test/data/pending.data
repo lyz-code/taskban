@@ -1,4 +1,4 @@
-[description:"Backlog task 1" entry:"1517438251" modified:"1517438418" pm:"backlog" project:"my-first-project" status:"pending" uuid:"fc840176-420c-477f-a1e2-4c021b8bc1e9"]
+[description:"Backlog task 1" entry:"1517438251" est:"0" modified:"1520244858" pm:"backlog" project:"my-first-project" status:"pending" uuid:"fc840176-420c-477f-a1e2-4c021b8bc1e9"]
 [description:"Backlog task 2" entry:"1517438254" modified:"1517438418" pm:"backlog" project:"my-first-project" status:"pending" uuid:"446e340b-6141-4733-9818-9f6dc1fcc4a3"]
 [description:"Backlog task 3" entry:"1517438257" modified:"1517438435" pm:"backlog" project:"my-second-project" status:"pending" uuid:"58499efa-02f7-488b-91a1-41e7b10325ed"]
 [description:"Todo task 3" entry:"1517438289" modified:"1517438418" pm:"todo" project:"my-first-project" status:"pending" uuid:"7b473ce6-aeb7-4d5e-b518-545d116fe58a"]

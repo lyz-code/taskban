@@ -3,5 +3,8 @@ uda.pm.label=Kanban
 uda.pm.values=todo,doing,done,blocked,test,backlog
 uda.pm.default=backlog
 
+uda.est.type=numeric
+uda.est.label=Estimate
+
 history.cache=100y
 history.cache.location=test/data/history.cache

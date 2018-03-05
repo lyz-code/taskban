@@ -4,7 +4,6 @@ import sys
 import yaml
 import tasklib
 import logging
-import datetime
 from tabulate import tabulate
 
 log = logging.getLogger('Main')
@@ -158,6 +157,8 @@ class KanbanReport(Report):
                     task['total_active_percent'] = \
                         round(100*task.active_time()/(task['est']*3600), 1)
                 except TypeError:
+                    task['total_active_percent'] = ''
+                except ZeroDivisionError:
                     task['total_active_percent'] = ''
                 task['active_time'] = \
                     round(task.active_time(self._start_tw_string))

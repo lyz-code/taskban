@@ -19,6 +19,31 @@ pip install -r requirements.txt
 python3 setup.py install
 ```
 
+You should use the following UDAs in your taskwarrior tasks
+* `est`: Estimate of the task
+* `pm`: The state of the task
+
+My suggestion would be to add this lines to your `taskrc`
+
+```
+uda.pm.type=string
+uda.pm.label=Kanban
+uda.pm.values=todo,doing,done,blocked,test,backlog
+uda.pm.default=backlog
+
+uda.est.type=numeric
+uda.est.label=Estimate
+```
+
+If you have a lot of activity in taskwarrior, the parsing of the history might
+be heavy, so I also suggest to use the history parsing cache, so add to your
+`taskrc`
+
+```
+history.cache=15d
+history.cache.location=history.cache
+```
+
 ## Test
 
 ```bash

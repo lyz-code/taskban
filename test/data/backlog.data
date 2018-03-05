@@ -22,3 +22,6 @@
 {"description":"Doing task 2","entry":"20180131T223832Z","modified":"20180131T224035Z","pm":"doing","project":"my-second-project","status":"pending","uuid":"2bb03904-3757-4b58-858a-1e01c905ecc8"}
 {"description":"Testing task 1","entry":"20180131T223907Z","modified":"20180131T224035Z","pm":"test","project":"my-second-project","status":"pending","uuid":"3eb88a23-bcc7-4c7d-8faf-5051597c1a20"}
 {"description":"Done task 1","end":"20180131T224042Z","entry":"20180131T223929Z","modified":"20180131T224042Z","pm":"doing","project":"my-first-project","status":"completed","uuid":"13c2ea35-b7c1-4fe2-9945-b8dc16d58996"}
+{"description":"est:0","entry":"20180131T223731Z","modified":"20180305T101019Z","pm":"backlog","project":"my-first-project","status":"pending","uuid":"fc840176-420c-477f-a1e2-4c021b8bc1e9"}
+{"description":"Backlog task 1","entry":"20180131T223731Z","modified":"20180131T224018Z","pm":"backlog","project":"my-first-project","status":"pending","uuid":"fc840176-420c-477f-a1e2-4c021b8bc1e9"}
+{"description":"Backlog task 1","entry":"20180131T223731Z","est":0,"modified":"20180305T101418Z","pm":"backlog","project":"my-first-project","status":"pending","uuid":"fc840176-420c-477f-a1e2-4c021b8bc1e9"}

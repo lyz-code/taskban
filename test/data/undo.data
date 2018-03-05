@@ -83,3 +83,7 @@ time 1517438442
 old [description:"Done task 1" entry:"1517438369" modified:"1517438399" pm:"doing" project:"my-first-project" start:"1517438373" status:"pending" uuid:"13c2ea35-b7c1-4fe2-9945-b8dc16d58996"]
 new [description:"Done task 1" end:"1517438442" entry:"1517438369" modified:"1517438442" pm:"doing" project:"my-first-project" status:"completed" uuid:"13c2ea35-b7c1-4fe2-9945-b8dc16d58996"]
 ---
+time 1520244858
+old [description:"Backlog task 1" entry:"1517438251" modified:"1517438418" pm:"backlog" project:"my-first-project" status:"pending" uuid:"fc840176-420c-477f-a1e2-4c021b8bc1e9"]
+new [description:"Backlog task 1" entry:"1517438251" est:"0" modified:"1520244858" pm:"backlog" project:"my-first-project" status:"pending" uuid:"fc840176-420c-477f-a1e2-4c021b8bc1e9"]
+---
