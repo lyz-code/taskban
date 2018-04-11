@@ -53,9 +53,9 @@ pytest
 
 ## Retro reports
 
-### Kanban reports
+### Board reports
 
-This reports will give the status of the Kanban board for a specified period of
+This reports will give the status of the Kanban/scrum board for a specified period of
 time with the total time spent in each task:
 
 If not specified the `period` flag it will take the last day modified tasks.
@@ -93,40 +93,3 @@ This report will give you the next information
   and the estimate
 * *Description*: Description of the task
 
-### Activity reports
-
-This reports will give the time spent in each task for a selected period of
-time.
-
-* We'll have two specified periods, the period of analysis of tasks, and the
-  period of subdivisions. For example, we'd like a report of the last week
-  subdivided by days
-* We'll print a section on each subdivision with a list of tasks and their
-  active time.
-* Finally we'll add up all the active time per subdivision and the sum up of all
-  the active time of the period
-
-### Estimation reports
-
-
-## Sprint planning
-
-## Task mangling
-
-### Add task to backlog
-
-### Start a task
-
-If there are more than X tasks in doing, force the user to switch some of them
-to blocked, todo or even backlog
-
-### Block a task
-
-#### With a reason
-#### With a task id
-
-### Add a task to an active sprint
-
-If I have to add another task outside the sprint planning, make the user select
-one of the other tasks so that the amount of estimated time is a constant
-inside to
