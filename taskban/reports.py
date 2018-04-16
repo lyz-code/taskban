@@ -159,7 +159,7 @@ class KanbanReport(Report):
                 except TypeError:
                     task['total_active_percent'] = ''
                 except ZeroDivisionError:
-                    task['total_active_percent'] = ''
+                    task['total_active_percent'] = 'NoEstimate'
                 task['active_time'] = \
                     round(task.active_time(self._start_tw_string))
                 self.snapshot[state][task['project']].append(task)
