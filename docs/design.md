@@ -1,6 +1,6 @@
 In this document we'll write the design docs for the different features
 
-# Retro reports
+# Sprint review
 
 ## Objectives reports
 
@@ -51,22 +51,50 @@ the taskwarrior config, and calculate the following scores:
 It will also be nice to have the variation of the score since the last sprint
 review.
 
+### Check objectives/subobjectives priority
+
+We'll have a command `taskban obj obj` that will give a table with the
+objectives showing the `ov`, `pri`, `description`, `obj urgency` ordered by `obj
+urgency`
+
+We'll have a command `taskban obj subobj` that will give a table with the
+subobjectives showing the `ov`, `pri`, `description`, `subobj urgency` ordered
+by `subobj urgency`
+
+We'll have a command `taskban obj save` that will update the urgency of the
+taskwarrior config file.
+
+### Check the status of the objectives
+
+We will need a cli UI to check the tasks/behaviors of each subobjective and see
+a final report of the status of the objectives and it's progression
+
+## Unplanned tasks
+
+Get tasks done added outside the sprint, with total time spent in them vs total time
+spent in planned tasks
+
+## Burndown report
+
+Add support for a scrum burndown est report, so we can see the progression of
+scope when we add new tasks
 
 ## Activity reports
 
 This reports will give the time spent in each task for a selected period of
 time.
 
-* We'll have two specified periods, the period of analysis of tasks, and the
-  period of subdivisions. For example, we'd like a report of the last week
-  subdivided by days
-* We'll print a section on each subdivision with a list of tasks and their
-  active time.
-* Finally we'll add up all the active time per subdivision and the sum up of all
-  the active time of the period
+### Add overall time spent on projects
 
-## Estimation reports
+We'll add support to show the sum of active time in the taskban now report, both
+per project and the total
 
+## Progression reports
+
+### Sprint based burndown or history
+Get the progression of the project, todo tasks, backlog tasks, overall tasks,
+with a prediction of completion, like the burndown.weekly or history but
+correctly done by sprint
 
 # Sprint planning
 
@@ -77,6 +105,28 @@ a tool that can specify the weights of the
 objective/subobjective/(behaviors|tasks), once we've got them set up maybe in
 the taskban config, will calculate the urgency of each taskwarrior project, the
 urgency factor of `pri`, `ov` and it will set them on the taskwarrior config.
+
+# Sprint refinement
+
+With this mode we'll checkout the backlog, order it and refine it for the next
+sprint.
+
+We'll have a `taskban ref start` and `taskban ref end` to set up the start and
+end of an sprint refinement. That will be saved in a file in the share dir of
+taskban. So you can continue the refinement whenever you like.
+
+Once the refinement has started:
+
+* `taskban ref` will give you a `task pro:{{ item }} list` for the first project,
+* If you hit again `taskban ref` it will give you the same `taskban pro:{{ item
+  }} list`.
+* If you hit `taskban ref next` it will jump to the next project (subproject)
+* If you want to go back `taskban ref prev`
+* If you want to list the projects `taskban ref list`
+* If you want to jump to a project `taskban ref jump {{ project }}`
+
+`taskban` will save wherever you are in the share file, so you can stop the
+refinement whenever you want and continue later
 
 # Task mangling
 
