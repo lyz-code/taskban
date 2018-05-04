@@ -32,7 +32,10 @@ def main():
             taskrc_path=args.taskrc_path,
             config_path=args.config_path,
         )
-        report.print_report(args.backlog)
+        report.print_report(
+            show_backlog=args.backlog,
+            show_inactive=args.inactive
+        )
 
 
 if __name__ == "__main__":

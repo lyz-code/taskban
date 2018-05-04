@@ -45,6 +45,8 @@ def load_parser():
                             help='Taskwarrior compatible date string')
     now_parser.add_argument("-b", "--backlog", action="store_true",
                             help="Show backlog")
+    now_parser.add_argument("-i", "--inactive", action="store_true",
+                            help="Show inactive tasks")
     snapshot_parser.add_argument("-p", "--period", type=str, default='100y',
                                  help='Taskwarrior compatible date string')
     argcomplete.autocomplete(parser)

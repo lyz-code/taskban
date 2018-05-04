@@ -85,6 +85,9 @@ taskban now -p 1984-01-01
 
 If you want to also show the backlog use the `-b` flag
 
+If you want to also show the tasks that have changed but have an active time of
+0 use the `-i` flag.
+
 This report will give you the next information
 * *ID*: Task id, if it's completed it will show 0
 * *Est*: The number of hours estimated to complete the task

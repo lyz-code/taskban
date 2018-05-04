@@ -170,7 +170,12 @@ class KanbanReport(Report):
                 self.snapshot[state][project] = sorted(
                     self.snapshot[state][project], key=lambda k: k['urgency'])
 
-    def print_report(self, show_backlog=True, out=sys.stdout):
+    def print_report(
+        self,
+        show_backlog=True,
+        show_inactive=False,
+        out=sys.stdout
+    ):
         '''Print the report'''
         out.write(
             '# {}'
@@ -186,27 +191,29 @@ class KanbanReport(Report):
                 continue
             out.write('\n\n## {}'.format(state))
             for project in self.snapshot[state].keys():
-                out.write('\n\n### {}\n\n'.format(project))
                 dataset = []
                 for task in self.snapshot[state][project]:
-                    dataset.append([task['id'],
-                                    task['est'],
-                                    self.seconds_to_readable(
-                                        task['active_time']),
-                                    task['total_active_percent'],
-                                    task['description']])
+                    if task['active_time'] > 0 or show_inactive:
+                        dataset.append([task['id'],
+                                        task['est'],
+                                        self.seconds_to_readable(
+                                            task['active_time']),
+                                        task['total_active_percent'],
+                                        task['description']])
                     if len(dataset) == self.config['max_tasks_per_state']:
                         break
-                out.write(
-                    tabulate(
-                        dataset,
-                        headers=[
-                            'ID',
-                            'Est',
-                            'Active',
-                            'Progress %',
-                            'Description'
-                        ]
+                if len(dataset) > 0:
+                    out.write('\n\n### {}\n\n'.format(project))
+                    out.write(
+                        tabulate(
+                            dataset,
+                            headers=[
+                                'ID',
+                                'Est',
+                                'Active',
+                                'Progress %',
+                                'Description'
+                            ]
+                        )
                     )
-                )
         out.write('\n')
