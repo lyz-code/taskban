@@ -17,7 +17,8 @@ class Report():
         start_date=None,
         task_data_path=None,
         taskrc_path=None,
-        config_path='~/.local/share/taskban/config.yaml',
+        config_path=None,
+        data_path=None,
     ):
         self.load_config(config_path)
         self.update_config_with_arguments(
@@ -63,16 +64,20 @@ class Report():
 
     @property
     def start(self):
-        """Set up the start of the period to analyze. It must be a Taskwarrior
-        compatible string to fit in "now - {}".format(value).
-
-        The property will transform it in a datetime object"""
         return self._start
 
     @start.setter
     def start(self, value):
+        """Set up the start of the period to analyze. It must be:
+        * a Taskwarrior compatible string to fit in "now - {}".format(value)
+        * A date of YYYY-MM-DD.
+        * now
+
+        The property will transform it in a datetime object"""
         if re.match('[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}', value):
             datetime_string = value
+        elif re.match('now', value):
+            datetime_string = 'now'
         else:
             datetime_string = 'now - {}'.format(value)
 
@@ -110,6 +115,7 @@ class KanbanReport(Report):
         task_data_path=None,
         taskrc_path=None,
         config_path=None,
+        data_path=None,
     ):
 
         super(KanbanReport, self).__init__(
@@ -117,10 +123,11 @@ class KanbanReport(Report):
             task_data_path,
             taskrc_path,
             config_path,
+            data_path,
         )
 
         self.title = 'Kanban evolution since {}'.format(self.start.isoformat())
-        self.create_snapshot()
+        self.save()
 
     def _get_tasks_of_state(self, state):
         '''Get a list of tasks that are in the selected state '''
@@ -136,7 +143,7 @@ class KanbanReport(Report):
                 modified__after=self.start,
             )
 
-    def create_snapshot(self):
+    def save(self):
         '''Create a snapshot of the current kanban board, save it on
         self.snapshot in a dictionary where the keys are the states, and in
         each state the keys are the projects'''
@@ -217,3 +224,29 @@ class KanbanReport(Report):
                         )
                     )
         out.write('\n')
+
+
+class RefinementReport(Report):
+    """Refinement report, it represents the status of the backlog at the moment
+
+    It will let you jump from project to project to do the refinement"""
+
+    def __init__(
+        self,
+        start_date='now',
+        task_data_path=None,
+        taskrc_path=None,
+        config_path=None,
+        data_path=None,
+    ):
+
+        super(RefinementReport, self).__init__(
+            start_date,
+            task_data_path,
+            taskrc_path,
+            config_path,
+            data_path,
+        )
+
+        self.save()
+    pass

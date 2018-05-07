@@ -5,93 +5,21 @@ import tasklib
 import unittest
 import datetime
 import tempfile
-from taskban.reports import KanbanReport, Report
-from taskban.cli_arguments import load_parser
-
-
-class ParserTest(unittest.TestCase):
-    def setUp(self):
-        self.parser = load_parser()
-
-    def test_verbose(self):
-        parsed = self.parser.parse_args(['-v', 'now'])
-        self.assertEqual(parsed.verbose, 1)
-
-    def test_really_verbose(self):
-        parsed = self.parser.parse_args(['-vv', 'now'])
-        self.assertEqual(parsed.verbose, 2)
-
-    def test_quiet(self):
-        parsed = self.parser.parse_args(['-q', 'now'])
-        self.assertTrue(parsed.quiet)
-
-    def test_can_specify_taskwarrior_data_path(self):
-        parsed = self.parser.parse_args(['-d', '~/task/path', 'now'])
-        self.assertEqual(parsed.task_data_path, '~/task/path')
-
-    def test_now_default_taskwarrior_data_path(self):
-        parsed = self.parser.parse_args(['now'])
-        self.assertEqual(parsed.task_data_path, '~/.task/')
-
-    def test_can_specify_taskwarrior_config_path(self):
-        parsed = self.parser.parse_args(['--taskrc_path', '~/task/path', 'now'])
-        self.assertEqual(parsed.taskrc_path, '~/task/path')
-
-    def test_now_default_taskwarrior_config_path(self):
-        parsed = self.parser.parse_args(['now'])
-        self.assertEqual(parsed.taskrc_path, '~/.taskrc')
-
-    def test_can_specify_taskban_config_path(self):
-        parsed = self.parser.parse_args(['-f', '~/task/path', 'now'])
-        self.assertEqual(parsed.config_path, '~/task/path')
-
-    def test_subcommand_is_required(self):
-        with self.assertRaises(SystemExit):
-            self.parser.parse_args('')
-
-    def test_has_subcommand_now(self):
-        parsed = self.parser.parse_args(['now'])
-        self.assertEqual(parsed.subcommand, 'now')
-
-    def test_now_default_period(self):
-        parsed = self.parser.parse_args(['now'])
-        self.assertEqual(parsed.period, '1d')
-
-    def test_now_can_specify_period(self):
-        parsed = self.parser.parse_args(['now', '-p', '2d'])
-        self.assertEqual(parsed.period, '2d')
-
-    def test_now_can_specify_backlog(self):
-        parsed = self.parser.parse_args(['now', '-b'])
-        self.assertTrue(parsed.backlog)
-
-    def test_now_backlog_not_shown_by_default(self):
-        parsed = self.parser.parse_args(['now'])
-        self.assertFalse(parsed.backlog)
-
-    def test_has_subcommand_snapshot(self):
-        parsed = self.parser.parse_args(['snapshot'])
-        self.assertEqual(parsed.subcommand, 'snapshot')
-
-    def test_snapshot_default_period(self):
-        parsed = self.parser.parse_args(['snapshot'])
-        self.assertEqual(parsed.period, '100y')
-
-    def test_snapshot_can_specify_period(self):
-        parsed = self.parser.parse_args(['snapshot', '-p', '2d'])
-        self.assertEqual(parsed.period, '2d')
+from taskban.reports import RefinementReport, KanbanReport, Report
 
 
 class TestReport(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
         shutil.rmtree(self.tmp)
-        shutil.copytree('test/data', self.tmp)
-        self.config_path = os.path.join(self.tmp, 'config.yaml')
+        shutil.copytree('test/data', os.path.join(self.tmp, 'data'))
+        shutil.copytree('test/config', os.path.join(self.tmp, 'config'))
+        self.config_path = os.path.join(self.tmp, 'config')
+        self.data_path = os.path.join(self.tmp, 'data')
         self.report = Report(
-            task_data_path=self.tmp,
-            taskrc_path=os.path.join(self.tmp, 'taskrc'),
-            config_path=self.config_path,
+            task_data_path=self.data_path,
+            taskrc_path=os.path.join(self.config_path, 'taskrc'),
+            config_path=os.path.join(self.config_path, 'config.yaml'),
         )
 
     def tearDown(self):
@@ -120,7 +48,7 @@ class TestReport(unittest.TestCase):
                 'backlog',
             ],
         }
-        self.report.load_config(self.config_path)
+        self.report.load_config(os.path.join(self.config_path, 'config.yaml'))
         self.assertEqual(
             self.report.config,
             desired_config,
@@ -147,9 +75,9 @@ class TestReport(unittest.TestCase):
     def test_end_date_of_report_difference(self):
         self.report = Report(
             '1d',
-            task_data_path=self.tmp,
-            taskrc_path=os.path.join(self.tmp, 'taskrc'),
-            config_path=self.config_path,
+            task_data_path=self.data_path,
+            taskrc_path=os.path.join(self.config_path, 'taskrc'),
+            config_path=os.path.join(self.config_path, 'config.yaml'),
         )
 
         self.assertEqual((self.report._end - self.report.start).days, 1)
@@ -157,9 +85,9 @@ class TestReport(unittest.TestCase):
     def test_start_tw_string_has_now_when_start_is_a_string(self):
         self.report = Report(
             start_date='1d',
-            task_data_path=self.tmp,
-            taskrc_path=os.path.join(self.tmp, 'taskrc'),
-            config_path=self.config_path,
+            task_data_path=self.data_path,
+            taskrc_path=os.path.join(self.config_path, 'taskrc'),
+            config_path=os.path.join(self.config_path, 'config.yaml'),
         )
         self.assertEqual(
             self.report._start_tw_string,
@@ -177,12 +105,17 @@ class TestReport(unittest.TestCase):
             self.report.backend.convert_datetime_string('1984-01-01')
         )
 
+    def test_set_start_date_of_report_type_now(self):
+        self.report.start = 'now'
+        self.assertIsInstance(self.report.start, type(datetime.datetime.now()))
+        self.assertEqual(self.report._start_tw_string, 'now')
+
     def test_start_date_of_report_difference(self):
         self.report = Report(
             '1d',
-            task_data_path=self.tmp,
-            taskrc_path=os.path.join(self.tmp, 'taskrc'),
-            config_path=self.config_path,
+            task_data_path=self.data_path,
+            taskrc_path=os.path.join(self.config_path, 'taskrc'),
+            config_path=os.path.join(self.config_path, 'config.yaml'),
         )
         self.assertEqual(
             self.report._end - self.report.start,
@@ -207,11 +140,14 @@ class TestKanbanReport(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
         shutil.rmtree(self.tmp)
-        shutil.copytree('test/data', self.tmp)
+        shutil.copytree('test/data', os.path.join(self.tmp, 'data'))
+        shutil.copytree('test/config', os.path.join(self.tmp, 'config'))
+        self.config_path = os.path.join(self.tmp, 'config')
+        self.data_path = os.path.join(self.tmp, 'data')
         self.report = KanbanReport(
-            task_data_path=self.tmp,
-            taskrc_path=os.path.join(self.tmp, 'taskrc'),
-            config_path=os.path.join(self.tmp, 'config.yaml'),
+            task_data_path=self.data_path,
+            taskrc_path=os.path.join(self.config_path, 'taskrc'),
+            config_path=os.path.join(self.config_path, 'config.yaml'),
         )
 
     def tearDown(self):
@@ -273,6 +209,24 @@ class TestKanbanReport(unittest.TestCase):
     def test_skip(self):
         pass
 
+
+class TestRefinementReport(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        shutil.rmtree(self.tmp)
+        shutil.copytree('test/data', self.tmp)
+        self.report = RefinementReport(
+            task_data_path=self.tmp,
+            taskrc_path=os.path.join(self.tmp, 'taskrc'),
+            config_path=os.path.join(self.config_path, 'config.yaml'),
+        )
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp)
+
+   # def test_refinement_can_save_state(self):
+   #     self.report.save()
+#
 
 if __name__ == '__main__':
     unittest.main()

@@ -30,7 +30,7 @@ def load_parser():
         "--taskrc_path",
         type=str,
         default='~/.taskrc',
-        help='Taskwarrior data directory path',
+        help='Taskwarrior config file path',
     )
 
     parser.add_argument(
@@ -38,7 +38,7 @@ def load_parser():
         "--config_path",
         type=str,
         default='~/.local/share/taskban/config.yaml',
-        help='Taskwarrior data directory path',
+        help='Taskban data directory path',
     )
 
     now_parser.add_argument("-p", "--period", type=str, default='1d',
