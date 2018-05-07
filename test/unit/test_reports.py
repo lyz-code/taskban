@@ -48,11 +48,10 @@ class TestReport(unittest.TestCase):
                 'backlog',
             ],
         }
-        self.report.load_config(os.path.join(self.config_path, 'config.yaml'))
-        self.assertEqual(
-            self.report.config,
-            desired_config,
+        actual_config = self.report.load_yaml(
+            os.path.join(self.config_path, 'config.yaml'),
         )
+        self.assertEqual(actual_config, desired_config)
 
     def test_update_config_values(self):
         self.report.update_config_with_arguments(
@@ -214,19 +213,23 @@ class TestRefinementReport(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
         shutil.rmtree(self.tmp)
-        shutil.copytree('test/data', self.tmp)
+        shutil.copytree('test/data', os.path.join(self.tmp, 'data'))
+        shutil.copytree('test/config', os.path.join(self.tmp, 'config'))
+        self.config_path = os.path.join(self.tmp, 'config')
+        self.data_path = os.path.join(self.tmp, 'data')
         self.report = RefinementReport(
-            task_data_path=self.tmp,
+            task_data_path=self.data_path,
             taskrc_path=os.path.join(self.tmp, 'taskrc'),
             config_path=os.path.join(self.config_path, 'config.yaml'),
+            data_path=os.path.join(self.data_path, 'refinement.yaml'),
         )
 
     def tearDown(self):
         shutil.rmtree(self.tmp)
 
-   # def test_refinement_can_save_state(self):
-   #     self.report.save()
-#
+    def test_refinement_can_save_state(self):
+        self.report.save()
+
 
 if __name__ == '__main__':
     unittest.main()

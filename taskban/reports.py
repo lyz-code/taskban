@@ -20,7 +20,7 @@ class Report():
         config_path=None,
         data_path=None,
     ):
-        self.load_config(config_path)
+        self.config = self.load_yaml(config_path)
         self.update_config_with_arguments(
             start_date,
             task_data_path,
@@ -37,17 +37,17 @@ class Report():
         self.title = ''
         self.content = {}
 
-    def load_config(self, config_path):
+    def load_yaml(self, yaml_path):
         try:
 
-            with open(os.path.expanduser(config_path), 'r') as f:
+            with open(os.path.expanduser(yaml_path), 'r') as f:
                 try:
-                    self.config = yaml.safe_load(f)
+                    return yaml.safe_load(f)
                 except yaml.YAMLError as e:
                     log.error(e)
                     raise
         except FileNotFoundError as e:
-            log.error('Error opening config file {}'.format(config_path))
+            log.error('Error opening yaml file {}'.format(yaml_path))
             raise
 
     def update_config_with_arguments(
@@ -248,5 +248,6 @@ class RefinementReport(Report):
             data_path,
         )
 
-        self.save()
-    pass
+    def save(self):
+        'Save the state of the report, the start date, and the current project'
+
