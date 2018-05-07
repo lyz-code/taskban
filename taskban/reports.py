@@ -4,6 +4,7 @@ import sys
 import yaml
 import tasklib
 import logging
+import datetime
 from tabulate import tabulate
 
 log = logging.getLogger('Main')
@@ -251,7 +252,16 @@ class RefinementReport(Report):
             config_path,
             data_path,
         )
+        self.state_file = os.path.join(data_path, 'refinement.yaml')
+        self.state = {
+            'start': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M'),
+            'project': '',
+        }
 
     def save(self):
         'Save the state of the report, the start date, and the current project'
+        self.save_yaml(self.state_file, self.state)
 
+    def load(self):
+        'Load the state of the report'
+        self.state = self.load_yaml(self.state_file)

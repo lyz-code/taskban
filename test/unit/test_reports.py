@@ -5,6 +5,7 @@ import tasklib
 import unittest
 import datetime
 import tempfile
+from unittest.mock import patch
 from taskban.reports import RefinementReport, KanbanReport, Report
 
 
@@ -228,14 +229,39 @@ class TestRefinementReport(unittest.TestCase):
             task_data_path=self.data_path,
             taskrc_path=os.path.join(self.tmp, 'taskrc'),
             config_path=os.path.join(self.config_path, 'config.yaml'),
-            data_path=os.path.join(self.data_path, 'refinement.yaml'),
+            data_path=self.data_path,
         )
+        self.state_file = os.path.join(self.data_path, 'refinement.yaml')
 
     def tearDown(self):
         shutil.rmtree(self.tmp)
 
-    def test_refinement_can_save_state(self):
+    def test_refinement_has_state_file_attribute(self):
+        self.assertEqual(self.report.state_file, self.state_file)
+
+    @patch('taskban.reports.RefinementReport.save_yaml')
+    def test_refinement_can_save_state(self, saveyamlMock):
         self.report.save()
+        state = {
+            'start': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M'),
+            'project': '',
+        }
+        self.assertEqual(
+            saveyamlMock.assert_called_with(self.state_file, state),
+            None
+        )
+
+    @patch('taskban.reports.RefinementReport.load_yaml')
+    def test_refinement_can_load_state(self, loadyamlMock):
+        self.report.load()
+        self.assertEqual(
+            loadyamlMock.assert_called_with(self.state_file),
+            None
+        )
+        self.assertEqual(
+            str(type(self.report.state)),
+            "<class 'unittest.mock.MagicMock'>",
+        )
 
 
 if __name__ == '__main__':
