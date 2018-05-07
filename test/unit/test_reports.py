@@ -133,6 +133,13 @@ class TestReport(unittest.TestCase):
     def test_report_convert_seconds_to_readable(self):
         self.assertEqual(self.report.seconds_to_readable(6162), '01:42:42')
 
+    def test_save_yaml(self):
+        save_file = os.path.join(self.tmp, 'yaml_save_test.yaml')
+        dictionary = {'a': 'b', 'c': 'd'}
+        self.report.save_yaml(save_file, dictionary)
+        with open(save_file, 'r') as f:
+            self.assertEqual("a: b\nc: d\n", f.read())
+
 
 class TestKanbanReport(unittest.TestCase):
 

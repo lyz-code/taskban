@@ -50,6 +50,10 @@ class Report():
             log.error('Error opening yaml file {}'.format(yaml_path))
             raise
 
+    def save_yaml(self, yaml_path, dictionary):
+        with open(yaml_path, "w") as f:
+            yaml.dump(dictionary, f, default_flow_style=False)
+
     def update_config_with_arguments(
         self,
         start_date,
