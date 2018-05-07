@@ -263,6 +263,11 @@ class TestRefinementReport(unittest.TestCase):
             "<class 'unittest.mock.MagicMock'>",
         )
 
+    @patch('taskban.reports.RefinementReport.load_yaml')
+    def test_refinement_doesnt_error_when_absent_state_file(self, loadyamlMock):
+        loadyamlMock.side_effect = FileNotFoundError
+        self.report.load()
+
 
 if __name__ == '__main__':
     unittest.main()

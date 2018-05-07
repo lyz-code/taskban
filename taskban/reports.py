@@ -264,4 +264,7 @@ class RefinementReport(Report):
 
     def load(self):
         'Load the state of the report'
-        self.state = self.load_yaml(self.state_file)
+        try:
+            self.state = self.load_yaml(self.state_file)
+        except FileNotFoundError:
+            pass
