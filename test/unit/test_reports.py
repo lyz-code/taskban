@@ -264,9 +264,18 @@ class TestRefinementReport(unittest.TestCase):
         )
 
     @patch('taskban.reports.RefinementReport.load_yaml')
-    def test_refinement_doesnt_error_when_absent_state_file(self, loadyamlMock):
+    def test_refinement_absent_state_file_instate_new_report(
+        self,
+        loadyamlMock,
+    ):
         loadyamlMock.side_effect = FileNotFoundError
+        state = {
+            'start': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M'),
+            'project': '',
+        }
+
         self.report.load()
+        self.assertEqual(self.report.state, state)
 
 
 if __name__ == '__main__':

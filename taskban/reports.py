@@ -253,10 +253,7 @@ class RefinementReport(Report):
             data_path,
         )
         self.state_file = os.path.join(data_path, 'refinement.yaml')
-        self.state = {
-            'start': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M'),
-            'project': '',
-        }
+        self.load()
 
     def save(self):
         'Save the state of the report, the start date, and the current project'
@@ -267,4 +264,7 @@ class RefinementReport(Report):
         try:
             self.state = self.load_yaml(self.state_file)
         except FileNotFoundError:
-            pass
+            self.state = {
+                'start': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M'),
+                'project': '',
+            }
