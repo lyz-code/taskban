@@ -255,6 +255,13 @@ class RefinementReport(Report):
         self.state_file = os.path.join(data_path, 'refinement.yaml')
         self.load()
 
+    def print_report(self):
+        'Print the report'
+        if self.state['project'] is None:
+            pass
+
+
+
     def end(self):
         'End the refinement, deleting the state file'
         os.remove(self.state_file)
@@ -270,5 +277,5 @@ class RefinementReport(Report):
         except FileNotFoundError:
             self.state = {
                 'start': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M'),
-                'project': '',
+                'project': None,
             }

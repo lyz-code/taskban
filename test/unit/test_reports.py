@@ -244,7 +244,7 @@ class TestRefinementReport(unittest.TestCase):
         self.report.save()
         state = {
             'start': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M'),
-            'project': '',
+            'project': None,
         }
         self.assertEqual(
             saveyamlMock.assert_called_with(self.state_file, state),
@@ -271,7 +271,7 @@ class TestRefinementReport(unittest.TestCase):
         loadyamlMock.side_effect = FileNotFoundError
         state = {
             'start': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M'),
-            'project': '',
+            'project': None,
         }
 
         self.report.load()
@@ -282,6 +282,14 @@ class TestRefinementReport(unittest.TestCase):
         self.report.end()
         self.assertEqual(
             osMock.remove.assert_called_with(self.state_file),
+            None,
+        )
+
+    @patch('taskban.reports.print')
+    def test_refinement_prints_report_when_no_project_is_set(self, printMock):
+        self.report.print_report()
+        self.assertEqual(
+            printMock.assert_called_with(self.state_file),
             None,
         )
 
