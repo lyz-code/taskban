@@ -255,6 +255,10 @@ class RefinementReport(Report):
         self.state_file = os.path.join(data_path, 'refinement.yaml')
         self.load()
 
+    def end(self):
+        'End the refinement, deleting the state file'
+        os.remove(self.state_file)
+
     def save(self):
         'Save the state of the report, the start date, and the current project'
         self.save_yaml(self.state_file, self.state)

@@ -256,7 +256,7 @@ class TestRefinementReport(unittest.TestCase):
         self.report.load()
         self.assertEqual(
             loadyamlMock.assert_called_with(self.state_file),
-            None
+            None,
         )
         self.assertEqual(
             str(type(self.report.state)),
@@ -276,6 +276,14 @@ class TestRefinementReport(unittest.TestCase):
 
         self.report.load()
         self.assertEqual(self.report.state, state)
+
+    @patch('taskban.reports.os')
+    def test_refinement_has_end_method(self, osMock):
+        self.report.end()
+        self.assertEqual(
+            osMock.remove.assert_called_with(self.state_file),
+            None,
+        )
 
 
 if __name__ == '__main__':
