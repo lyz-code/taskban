@@ -227,7 +227,7 @@ class TestRefinementReport(unittest.TestCase):
         self.data_path = os.path.join(self.tmp, 'data')
         self.report = RefinementReport(
             task_data_path=self.data_path,
-            taskrc_path=os.path.join(self.tmp, 'taskrc'),
+            taskrc_path=os.path.join(self.config_path, 'taskrc'),
             config_path=os.path.join(self.config_path, 'config.yaml'),
             data_path=self.data_path,
         )
@@ -285,11 +285,16 @@ class TestRefinementReport(unittest.TestCase):
             None,
         )
 
-    @patch('taskban.reports.print')
-    def test_refinement_prints_report_when_no_project_is_set(self, printMock):
+    @patch('taskban.reports.os')
+    def test_refinement_prints_report_when_no_project_is_set(self, osMock):
         self.report.print_report()
         self.assertEqual(
-            printMock.assert_called_with(self.state_file),
+            osMock.system.assert_called_with(
+                'TASKDATA={} task rc:{} project:my-first-project list'.format(
+                    self.data_path,
+                    os.path.join(self.config_path, 'taskrc'),
+                ),
+            ),
             None,
         )
 

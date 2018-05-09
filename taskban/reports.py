@@ -253,14 +253,21 @@ class RefinementReport(Report):
             data_path,
         )
         self.state_file = os.path.join(data_path, 'refinement.yaml')
+        self.backend.get_projects()
         self.load()
 
     def print_report(self):
         'Print the report'
         if self.state['project'] is None:
-            pass
+            self.state['project'] = sorted(self.backend.projects)[0]
 
-
+        os.system(
+            'TASKDATA={} task rc:{} project:{} list'.format(
+                self.config['task_data_path'],
+                self.config['taskrc_path'],
+                self.state['project'],
+            ),
+        )
 
     def end(self):
         'End the refinement, deleting the state file'
