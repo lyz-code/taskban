@@ -212,10 +212,6 @@ class TestKanbanReport(unittest.TestCase):
     #     with open('test/data/taskban_report_sample', 'r') as f:
     #         self.assertEqual(output, f.read())
 
-    @pytest.mark.skip()
-    def test_skip(self):
-        pass
-
 
 class TestRefinementReport(unittest.TestCase):
     def setUp(self):
@@ -244,7 +240,7 @@ class TestRefinementReport(unittest.TestCase):
         self.report.save()
         state = {
             'start': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M'),
-            'project': None,
+            'project': 'my-first-project',
         }
         self.assertEqual(
             saveyamlMock.assert_called_with(self.state_file, state),
@@ -271,7 +267,7 @@ class TestRefinementReport(unittest.TestCase):
         loadyamlMock.side_effect = FileNotFoundError
         state = {
             'start': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M'),
-            'project': None,
+            'project': 'my-first-project',
         }
 
         self.report.load()
@@ -297,6 +293,90 @@ class TestRefinementReport(unittest.TestCase):
             ),
             None,
         )
+
+    @patch('taskban.reports.RefinementReport.save')
+    def test_refinement_can_set_next_sibling_on_projects(self, saveMock):
+        self.report.next('sibling')
+        self.assertEqual(self.report.state['project'], 'my-second-project')
+        self.assertTrue(saveMock.called)
+
+    def test_refinement_can_find_project_position_on_projects(self):
+        self.assertEqual(
+            self.report.find_project_position('my-first-project'),
+            [0, 0, 0],
+        )
+        self.assertEqual(
+            self.report.find_project_position('my-second-project'),
+            [1, 0, 0],
+        )
+
+    def test_refinement_can_find_project_position_on_subprojects(self):
+        self.assertEqual(
+            self.report.find_project_position('my-first-subproject'),
+            [0, 1, 0],
+        )
+        self.assertEqual(
+            self.report.find_project_position('my-second-subproject'),
+            [0, 2, 0],
+        )
+
+    def test_refinement_can_find_project_position_on_subsubprojects(self):
+        self.assertEqual(
+            self.report.find_project_position('my-first-subsubproject'),
+            [0, 1, 1],
+        )
+        self.assertEqual(
+            self.report.find_project_position('my-second-subsubproject'),
+            [0, 1, 2],
+        )
+
+    def test_refinement_can_find_project_on_projects(self):
+        self.assertEqual(
+            self.report.find_project([0, 0, 0]),
+            'my-first-project',
+        )
+        self.assertEqual(
+            self.report.find_project([1, 0, 0]),
+            'my-second-project',
+        )
+
+    def test_refinement_can_find_project_on_subprojects(self):
+        self.assertEqual(
+            self.report.find_project([0, 1, 0]),
+            'my-first-subproject',
+        )
+        self.assertEqual(
+            self.report.find_project([0, 2, 0]),
+            'my-second-subproject',
+        )
+
+    def test_refinement_can_find_project_on_subsubprojects(self):
+        self.assertEqual(
+            self.report.find_project([0, 1, 1]),
+            'my-first-subsubproject',
+        )
+        self.assertEqual(
+            self.report.find_project([0, 1, 2]),
+            'my-second-subsubproject',
+        )
+
+    @pytest.mark.skip(
+        reason="I need to implement first the next('child') method",
+    )
+    @patch('taskban.reports.RefinementReport.save')
+    def test_refinement_can_set_next_sibling_on_subprojects(self, saveMock):
+        self.report.next('sibling')
+        self.assertEqual(self.report.state['project'], 'my-second-project')
+        self.assertTrue(saveMock.called)
+
+    @pytest.mark.skip(
+        reason="I need to implement first the find_project_position() method",
+    )
+    @patch('taskban.reports.RefinementReport.save')
+    def test_refinement_can_set_next_child_on_projects(self, saveMock):
+        self.report.next('child')
+        self.assertEqual(self.report.state['project'], 'my-second-project')
+        self.assertTrue(saveMock.called)
 
 
 if __name__ == '__main__':

@@ -258,9 +258,6 @@ class RefinementReport(Report):
 
     def print_report(self):
         'Print the report'
-        if self.state['project'] is None:
-            self.state['project'] = sorted(self.backend.projects)[0]
-
         os.system(
             'TASKDATA={} task rc:{} project:{} list'.format(
                 self.config['task_data_path'],
@@ -284,5 +281,73 @@ class RefinementReport(Report):
         except FileNotFoundError:
             self.state = {
                 'start': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M'),
-                'project': None,
+                'project': sorted(self.backend.projects)[0],
             }
+
+    def find_project_position(self, search_key):
+        '''Find the position of the project inside the projects. For example in:
+
+        my-first-project
+            my-first-subproject
+                my-first-subsubproject
+            my-second-subproject
+        my-second-project
+
+        self.find_project_position(my-first-project) == [0, 0, 0]
+        self.find_project_position(my-second-project) == [1, 0, 0]
+        self.find_project_position(my-first-subproject) == [0, 1, 0]
+        self.find_project_position(my-first-subsubproject) == [0, 0, 1]
+        '''
+
+        for key, value in self.backend.projects.items():
+            key_position = sorted(self.backend.projects).index(key)
+            if key == search_key:
+                return [key_position, 0, 0]
+            elif value != {}:
+                for subkey, subvalue in value.items():
+                    subkey_position = sorted(value).index(subkey)
+                    if subkey == search_key:
+                        return [key_position, subkey_position + 1, 0]
+                    elif subvalue != {}:
+                        for subsubkey, subsubvalue in subvalue.items():
+                            subsubkey_position = sorted(subvalue).index(
+                                subsubkey,
+                            )
+                            if subsubkey == search_key:
+                                return [
+                                    key_position,
+                                    subkey_position + 1,
+                                    subsubkey_position + 1,
+                                ]
+
+    def find_project(self, key_position):
+        key = sorted(self.backend.projects)[key_position[0]]
+        if key_position[1] == 0:
+            return key
+        else:
+            subkey = sorted(self.backend.projects[key])[key_position[1] - 1]
+            if key_position[2] == 0:
+                return subkey
+            else:
+                return sorted(self.backend.projects[key][subkey])[
+                    key_position[2] - 1
+                ]
+
+    def next(self, parentage):
+        '''Set the next project in the state
+
+        Variable types and examples:
+
+        - parentage:
+            - type: String
+            - choices: parent, sibling, child
+        '''
+
+        if parentage == 'sibling':
+            current_position = self.find_project_position(self.state['project'])
+            self.state['project'] = sorted(
+                self.backend.projects
+            )[current_position[0] + 1]
+            self.save()
+        elif parentage == 'child':
+            pass
