@@ -355,11 +355,14 @@ class RefinementReport(Report):
         elif parentage == 'child':
             if project_position[1] == 0:
                 project_position[1] += 1
+            elif project_position[2] == 0:
+                project_position[2] += 1
             else:
-                if project_position[2] == 0:
-                    project_position[2] += 1
+                raise IndexError
         elif parentage == 'parent':
-            if project_position[2] == 0:
+            if project_position[1] == 0:
+                raise IndexError
+            elif project_position[2] == 0:
                 project_position[0] += 1
                 project_position[1] = 0
             else:
