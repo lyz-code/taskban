@@ -333,7 +333,43 @@ class RefinementReport(Report):
                     key_position[2] - 1
                 ]
 
-    def next(self, parentage):
+    def _next_child(self, parentage, direction):
+        '''Set the next child'''
+        if self.project_position[1] == 0:
+            self.project_position[1] += direction
+            if direction == -1:
+                self.project_position[0] += direction
+        elif self.project_position[2] == 0:
+            self.project_position[2] += direction
+            if direction == -1:
+                self.project_position[1] += direction
+        else:
+            raise IndexError
+
+    def _next_sibling(self, parentage, direction):
+        '''Set the next sibling'''
+        if self.project_position[1] == 0:
+            self.project_position[0] += direction
+        else:
+            if self.project_position[2] == 0:
+                self.project_position[1] += direction
+            else:
+                self.project_position[2] += direction
+
+    def _next_parent(self, parentage, direction):
+        '''Set the next sibling'''
+        if self.project_position[1] == 0:
+            raise IndexError
+        elif self.project_position[2] == 0:
+            if direction == 1:
+                self.project_position[0] += direction
+            self.project_position[1] = 0
+        else:
+            if direction == 1:
+                self.project_position[1] += direction
+            self.project_position[2] = 0
+
+    def next(self, parentage, direction=1):
         '''Set the next project in the state
 
         Variable types and examples:
@@ -343,32 +379,15 @@ class RefinementReport(Report):
             - choices: parent, sibling, child
         '''
 
-        project_position = self.find_project_position(self.state['project'])
+        self.project_position = self.find_project_position(
+            self.state['project'],
+        )
         if parentage == 'sibling':
-            if project_position[1] == 0:
-                project_position[0] += 1
-            else:
-                if project_position[2] == 0:
-                    project_position[1] += 1
-                else:
-                    project_position[2] += 1
+            self._next_sibling(parentage, direction)
         elif parentage == 'child':
-            if project_position[1] == 0:
-                project_position[1] += 1
-            elif project_position[2] == 0:
-                project_position[2] += 1
-            else:
-                raise IndexError
+            self._next_child(parentage, direction)
         elif parentage == 'parent':
-            if project_position[1] == 0:
-                raise IndexError
-            elif project_position[2] == 0:
-                project_position[0] += 1
-                project_position[1] = 0
-            else:
-                project_position[0] += 1
-                project_position[1] = 0
-                project_position[2] = 0
+            self._next_parent(parentage, direction)
 
-        self.state['project'] = self.find_project(project_position)
+        self.state['project'] = self.find_project(self.project_position)
         self.save()
