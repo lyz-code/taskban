@@ -343,11 +343,29 @@ class RefinementReport(Report):
             - choices: parent, sibling, child
         '''
 
+        project_position = self.find_project_position(self.state['project'])
         if parentage == 'sibling':
-            current_position = self.find_project_position(self.state['project'])
-            self.state['project'] = sorted(
-                self.backend.projects
-            )[current_position[0] + 1]
-            self.save()
+            if project_position[1] == 0:
+                project_position[0] += 1
+            else:
+                if project_position[2] == 0:
+                    project_position[1] += 1
+                else:
+                    project_position[2] += 1
         elif parentage == 'child':
-            pass
+            if project_position[1] == 0:
+                project_position[1] += 1
+            else:
+                if project_position[2] == 0:
+                    project_position[2] += 1
+        elif parentage == 'parent':
+            if project_position[2] == 0:
+                project_position[0] += 1
+                project_position[1] = 0
+            else:
+                project_position[0] += 1
+                project_position[1] = 0
+                project_position[2] = 0
+
+        self.state['project'] = self.find_project(project_position)
+        self.save()
