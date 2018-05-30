@@ -297,6 +297,8 @@ class RefinementReport(Report):
         self.find_project_position(my-second-project) == [1, 0, 0]
         self.find_project_position(my-first-subproject) == [0, 1, 0]
         self.find_project_position(my-first-subsubproject) == [0, 0, 1]
+
+        If it doesn't exist it will raise an error
         '''
 
         for key, value in self.backend.projects.items():
@@ -319,6 +321,7 @@ class RefinementReport(Report):
                                     subkey_position + 1,
                                     subsubkey_position + 1,
                                 ]
+        raise KeyError
 
     def find_project(self, key_position):
         key = sorted(self.backend.projects)[key_position[0]]
@@ -391,3 +394,12 @@ class RefinementReport(Report):
 
         self.state['project'] = self.find_project(self.project_position)
         self.save()
+
+    def jump(self, project_name):
+        '''Set the current project to project_name'''
+        try:
+            self.find_project_position(project_name)
+            self.state['project'] = project_name
+            self.save()
+        except KeyError:
+            raise

@@ -324,6 +324,10 @@ class TestRefinementReport(unittest.TestCase):
             [0, 1, 2],
         )
 
+    def test_refinement_find_project_position_raise_on_error(self):
+        with self.assertRaises(KeyError):
+            self.report.find_project_position('unexisting-project')
+
     def test_refinement_can_find_project_on_projects(self):
         self.assertEqual(
             self.report.find_project([0, 0, 0]),
@@ -492,6 +496,18 @@ class TestRefinementReport(unittest.TestCase):
         self.report.next('parent', direction=-1)
         self.assertEqual(self.report.state['project'], 'my-first-subproject')
         self.assertTrue(saveMock.called)
+
+    @patch('taskban.reports.RefinementReport.save')
+    def test_refinement_can_jump_to_project(self, saveMock):
+        self.report.jump('my-first-subsubproject')
+        self.assertEqual(self.report.state['project'], 'my-first-subsubproject')
+        self.assertTrue(saveMock.called)
+
+    @patch('taskban.reports.RefinementReport.save')
+    def test_refinement_cant_jump_to_unexisting_project(self, saveMock):
+        with self.assertRaises(KeyError):
+            self.report.jump('unexisting-project')
+        self.assertFalse(saveMock.called)
 
 
 if __name__ == '__main__':

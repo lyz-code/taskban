@@ -120,9 +120,15 @@ Once the refinement has started:
 * `taskban ref` will give you a `task pro:{{ item }} list` for the first project,
 * If you hit again `taskban ref` it will give you the same `taskban pro:{{ item
   }} list`.
-* If you hit `taskban ref next` it will jump to the next project (subproject)
+* If you hit `taskban ref next` it will jump to the next child if it exist,
+  if not the next sibling if it exist, if not it will go to the next parent
+* If you hit `taskban ref next parent` it will jump to the next parent
+* If you hit `taskban ref next child` it will jump to the next child
+* If you hit `taskban ref next sibling` it will jump to the next sibling
 * If you want to go back `taskban ref prev`
-* If you want to list the projects `taskban ref list`
+* If you want to go back `taskban ref prev parent`
+* If you want to go back `taskban ref prev child`
+* If you want to go back `taskban ref prev sibling`
 * If you want to jump to a project `taskban ref jump {{ project }}`
 
 `taskban` will save wherever you are in the share file, so you can stop the
