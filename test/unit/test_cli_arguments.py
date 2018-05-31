@@ -1,8 +1,10 @@
 import unittest
-from taskban.cli_arguments import load_parser
+import logging
+from unittest.mock import MagicMock, patch, call
+from taskban.cli import load_parser, load_logger
 
 
-class ParserTest(unittest.TestCase):
+class TestArgparse(unittest.TestCase):
     def setUp(self):
         self.parser = load_parser()
 
@@ -73,3 +75,121 @@ class ParserTest(unittest.TestCase):
     def test_snapshot_can_specify_period(self):
         parsed = self.parser.parse_args(['snapshot', '-p', '2d'])
         self.assertEqual(parsed.period, '2d')
+
+
+class TestLogger(unittest.TestCase):
+    @patch('taskban.cli.logging')
+    def test_logger_is_configured_by_default(self, logMock):
+        logMock.DEBUG = 10
+        logMock.INFO = 20
+        logMock.WARNING = 30
+        logMock.ERROR = 40
+        args = MagicMock()
+        args.verbose = False
+        args.quiet = False
+        load_logger(args)
+        self.assertEqual(
+            logMock.addLevelName.assert_has_calls(
+                [
+                    call(logging.INFO, '[\033[36m+\033[0m]'),
+                    call(logging.ERROR, '[\033[31m+\033[0m]'),
+                    call(logging.DEBUG, '[\033[32m+\033[0m]'),
+                    call(logging.WARNING, '[\033[33m+\033[0m]'),
+                ]
+            ),
+            None
+        )
+        self.assertEqual(
+            logMock.basicConfig.assert_called_with(
+                level=logging.WARNING,
+                format="  %(levelname)s %(message)s",
+            ),
+            None
+        )
+
+    @patch('taskban.cli.logging')
+    def test_logger_in_quiet_mode(self, logMock):
+        logMock.DEBUG = 10
+        logMock.INFO = 20
+        logMock.WARNING = 30
+        logMock.ERROR = 40
+        args = MagicMock()
+        args.verbose = False
+        args.quiet = True
+        load_logger(args)
+        self.assertEqual(
+            logMock.addLevelName.assert_has_calls(
+                [
+                    call(logging.INFO, '[\033[36m+\033[0m]'),
+                    call(logging.ERROR, '[\033[31m+\033[0m]'),
+                    call(logging.DEBUG, '[\033[32m+\033[0m]'),
+                    call(logging.WARNING, '[\033[33m+\033[0m]'),
+                ]
+            ),
+            None
+        )
+        self.assertEqual(
+            logMock.basicConfig.assert_called_with(
+                level=logging.ERROR,
+                format="  %(levelname)s %(message)s",
+            ),
+            None
+        )
+
+    @patch('taskban.cli.logging')
+    def test_logger_in_verbose_mode(self, logMock):
+        logMock.DEBUG = 10
+        logMock.INFO = 20
+        logMock.WARNING = 30
+        logMock.ERROR = 40
+        args = MagicMock()
+        args.verbose = 1
+        args.quiet = False
+        load_logger(args)
+        self.assertEqual(
+            logMock.addLevelName.assert_has_calls(
+                [
+                    call(logging.INFO, '[\033[36m+\033[0m]'),
+                    call(logging.ERROR, '[\033[31m+\033[0m]'),
+                    call(logging.DEBUG, '[\033[32m+\033[0m]'),
+                    call(logging.WARNING, '[\033[33m+\033[0m]'),
+                ]
+            ),
+            None
+        )
+        self.assertEqual(
+            logMock.basicConfig.assert_called_with(
+                level=logging.INFO,
+                format="  %(levelname)s %(message)s",
+            ),
+            None
+        )
+
+    @patch('taskban.cli.logging')
+    def test_logger_in_really_verbose_mode(self, logMock):
+        logMock.DEBUG = 10
+        logMock.INFO = 20
+        logMock.WARNING = 30
+        logMock.ERROR = 40
+        args = MagicMock()
+        args.verbose = 2
+        args.quiet = False
+        load_logger(args)
+        self.assertEqual(
+            logMock.addLevelName.assert_has_calls(
+                [
+                    call(logging.INFO, '[\033[36m+\033[0m]'),
+                    call(logging.ERROR, '[\033[31m+\033[0m]'),
+                    call(logging.DEBUG, '[\033[32m+\033[0m]'),
+                    call(logging.WARNING, '[\033[33m+\033[0m]'),
+                ]
+            ),
+            None
+        )
+        self.assertEqual(
+            logMock.basicConfig.assert_called_with(
+                level=logging.DEBUG,
+                format="  %(levelname)s %(message)s",
+            ),
+            None
+        )

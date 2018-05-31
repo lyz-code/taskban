@@ -17,7 +17,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from taskban.reports import KanbanReport
-from taskban.cli_arguments import load_logger, load_parser
+from taskban.cli import load_logger, load_parser
 
 
 def main():
