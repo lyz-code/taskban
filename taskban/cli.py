@@ -34,6 +34,14 @@ def load_parser():
         help='Taskban data directory path',
     )
 
+    parser.add_argument(
+        "-D",
+        "--data_path",
+        type=str,
+        default='~/.local/share/taskban/',
+        help='Taskban data directory path',
+    )
+
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-v", "--verbose", action="count")
     group.add_argument("-q", "--quiet", action="store_true")

@@ -39,6 +39,14 @@ class TestArgparse(unittest.TestCase):
         parsed = self.parser.parse_args(['ocupation'])
         self.assertEqual(parsed.taskrc_path, '~/.taskrc')
 
+    def test_can_specify_taskban_data_path(self):
+        parsed = self.parser.parse_args(['-D', '~/task/path', 'ocupation'])
+        self.assertEqual(parsed.data_path, '~/task/path')
+
+    def test_ocupation_default_taskban_data_path(self):
+        parsed = self.parser.parse_args(['ocupation'])
+        self.assertEqual(parsed.data_path, '~/.local/share/taskban/')
+
     def test_can_specify_taskban_config_path(self):
         parsed = self.parser.parse_args(['-f', '~/task/path', 'ocupation'])
         self.assertEqual(parsed.config_path, '~/task/path')

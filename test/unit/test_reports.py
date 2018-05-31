@@ -251,7 +251,7 @@ class TestRefinementReport(unittest.TestCase):
     def test_refinement_can_load_state(self, loadyamlMock):
         self.report.load()
         self.assertEqual(
-            loadyamlMock.assert_called_with(self.state_file),
+            loadyamlMock.assert_called_with(self.state_file, no_fail=True),
             None,
         )
         self.assertEqual(

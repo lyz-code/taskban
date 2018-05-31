@@ -38,7 +38,7 @@ class Report():
         self.title = ''
         self.content = {}
 
-    def load_yaml(self, yaml_path):
+    def load_yaml(self, yaml_path, no_fail=False):
         try:
 
             with open(os.path.expanduser(yaml_path), 'r') as f:
@@ -277,7 +277,7 @@ class RefinementReport(Report):
     def load(self):
         'Load the state of the report'
         try:
-            self.state = self.load_yaml(self.state_file)
+            self.state = self.load_yaml(self.state_file, no_fail=True)
         except FileNotFoundError:
             self.state = {
                 'start': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M'),

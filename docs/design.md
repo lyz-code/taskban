@@ -117,19 +117,21 @@ taskban. So you can continue the refinement whenever you like.
 
 Once the refinement has started:
 
-* `taskban ref` will give you a `task pro:{{ item }} list` for the first project,
-* If you hit again `taskban ref` it will give you the same `taskban pro:{{ item
-  }} list`.
-* If you hit `taskban ref next` it will jump to the next child if it exist,
+* If you hit `taskban refine next parent` it will jump to the next parent
+* If you hit `taskban refine next child` it will jump to the next child
+* If you hit `taskban refine next sibling` it will jump to the next sibling
+* If you want to go back `taskban refine prev parent`
+* If you want to go back `taskban refine prev child`
+* If you want to go back `taskban refine prev sibling`
+* If you want to jump to a project `taskban refine jump {{ project }}`
+* If you hit `taskban refine next` it will jump to the next child if it exist,
   if not the next sibling if it exist, if not it will go to the next parent
-* If you hit `taskban ref next parent` it will jump to the next parent
-* If you hit `taskban ref next child` it will jump to the next child
-* If you hit `taskban ref next sibling` it will jump to the next sibling
-* If you want to go back `taskban ref prev`
-* If you want to go back `taskban ref prev parent`
-* If you want to go back `taskban ref prev child`
-* If you want to go back `taskban ref prev sibling`
-* If you want to jump to a project `taskban ref jump {{ project }}`
+* If you want to go back `taskban refine prev`
+
+
+* `taskban refine` will give you a `task pro:{{ item }} list` for the first project,
+* If you hit again `taskban refine` it will give you the same `taskban pro:{{ item
+  }} list`.
 
 `taskban` will save wherever you are in the share file, so you can stop the
 refinement whenever you want and continue later
