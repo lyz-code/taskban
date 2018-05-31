@@ -306,21 +306,29 @@ class TestRefinementReport(unittest.TestCase):
 
     def test_refinement_can_find_project_position_on_subprojects(self):
         self.assertEqual(
-            self.report.find_project_position('my-first-subproject'),
+            self.report.find_project_position(
+                'my-first-project.my-first-subproject',
+            ),
             [0, 1, 0],
         )
         self.assertEqual(
-            self.report.find_project_position('my-second-subproject'),
+            self.report.find_project_position(
+                'my-first-project.my-second-subproject',
+            ),
             [0, 2, 0],
         )
 
     def test_refinement_can_find_project_position_on_subsubprojects(self):
         self.assertEqual(
-            self.report.find_project_position('my-first-subsubproject'),
+            self.report.find_project_position(
+                'my-first-project.my-first-subproject.my-first-subsubproject',
+            ),
             [0, 1, 1],
         )
         self.assertEqual(
-            self.report.find_project_position('my-second-subsubproject'),
+            self.report.find_project_position(
+                'my-first-project.my-first-subproject.my-second-subsubproject',
+            ),
             [0, 1, 2],
         )
 
@@ -341,21 +349,21 @@ class TestRefinementReport(unittest.TestCase):
     def test_refinement_can_find_project_on_subprojects(self):
         self.assertEqual(
             self.report.find_project([0, 1, 0]),
-            'my-first-subproject',
+            'my-first-project.my-first-subproject',
         )
         self.assertEqual(
             self.report.find_project([0, 2, 0]),
-            'my-second-subproject',
+            'my-first-project.my-second-subproject',
         )
 
     def test_refinement_can_find_project_on_subsubprojects(self):
         self.assertEqual(
             self.report.find_project([0, 1, 1]),
-            'my-first-subsubproject',
+            'my-first-project.my-first-subproject.my-first-subsubproject',
         )
         self.assertEqual(
             self.report.find_project([0, 1, 2]),
-            'my-second-subsubproject',
+            'my-first-project.my-first-subproject.my-second-subsubproject',
         )
 
     @patch('taskban.reports.RefinementReport.save')
@@ -366,37 +374,48 @@ class TestRefinementReport(unittest.TestCase):
 
     @patch('taskban.reports.RefinementReport.save')
     def test_refinement_can_set_next_sibling_on_subprojects(self, saveMock):
-        self.report.state['project'] = 'my-first-subproject'
+        self.report.state['project'] = 'my-first-project.my-first-subproject'
         self.report.next('sibling')
-        self.assertEqual(self.report.state['project'], 'my-second-subproject')
+        self.assertEqual(
+            self.report.state['project'],
+            'my-first-project.my-second-subproject',
+        )
         self.assertTrue(saveMock.called)
 
     @patch('taskban.reports.RefinementReport.save')
     def test_refinement_can_set_next_sibling_on_subsubprojects(self, saveMock):
-        self.report.state['project'] = 'my-first-subsubproject'
+        self.report.state['project'] = \
+            'my-first-project.my-first-subproject.my-first-subsubproject'
         self.report.next('sibling')
         self.assertEqual(
             self.report.state['project'],
-            'my-second-subsubproject',
+            'my-first-project.my-first-subproject.my-second-subsubproject',
         )
         self.assertTrue(saveMock.called)
 
     @patch('taskban.reports.RefinementReport.save')
     def test_refinement_can_set_next_child_on_projects(self, saveMock):
         self.report.next('child')
-        self.assertEqual(self.report.state['project'], 'my-first-subproject')
+        self.assertEqual(
+            self.report.state['project'],
+            'my-first-project.my-first-subproject',
+        )
         self.assertTrue(saveMock.called)
 
     @patch('taskban.reports.RefinementReport.save')
     def test_refinement_can_set_next_child_on_subprojects(self, saveMock):
-        self.report.state['project'] = 'my-first-subproject'
+        self.report.state['project'] = 'my-first-project.my-first-subproject'
         self.report.next('child')
-        self.assertEqual(self.report.state['project'], 'my-first-subsubproject')
+        self.assertEqual(
+            self.report.state['project'],
+            'my-first-project.my-first-subproject.my-first-subsubproject',
+        )
         self.assertTrue(saveMock.called)
 
     @patch('taskban.reports.RefinementReport.save')
     def test_refinement_cant_set_next_child_on_subsubprojects(self, saveMock):
-        self.report.state['project'] = 'my-first-subsubproject'
+        self.report.state['project'] = \
+            'my-first-project.my-first-subproject.my-first-subsubproject'
         with self.assertRaises(IndexError):
             self.report.next('child')
         self.assertFalse(saveMock.called)
@@ -410,16 +429,20 @@ class TestRefinementReport(unittest.TestCase):
 
     @patch('taskban.reports.RefinementReport.save')
     def test_refinement_can_set_next_parent_on_subprojects(self, saveMock):
-        self.report.state['project'] = 'my-first-subproject'
+        self.report.state['project'] = 'my-first-project.my-first-subproject'
         self.report.next('parent')
         self.assertEqual(self.report.state['project'], 'my-second-project')
         self.assertTrue(saveMock.called)
 
     @patch('taskban.reports.RefinementReport.save')
     def test_refinement_can_set_next_parent_on_subsubprojects(self, saveMock):
-        self.report.state['project'] = 'my-first-subsubproject'
+        self.report.state['project'] = \
+            'my-first-project.my-first-subproject.my-first-subsubproject'
         self.report.next('parent')
-        self.assertEqual(self.report.state['project'], 'my-second-subproject')
+        self.assertEqual(
+            self.report.state['project'],
+            'my-first-project.my-second-subproject',
+        )
         self.assertTrue(saveMock.called)
 
     @patch('taskban.reports.RefinementReport.save')
@@ -431,9 +454,12 @@ class TestRefinementReport(unittest.TestCase):
 
     @patch('taskban.reports.RefinementReport.save')
     def test_refinement_can_set_previous_sibling_on_subprojects(self, saveMock):
-        self.report.state['project'] = 'my-second-subproject'
+        self.report.state['project'] = 'my-first-project.my-second-subproject'
         self.report.next('sibling', direction=-1)
-        self.assertEqual(self.report.state['project'], 'my-first-subproject')
+        self.assertEqual(
+            self.report.state['project'],
+            'my-first-project.my-first-subproject',
+        )
         self.assertTrue(saveMock.called)
 
     @patch('taskban.reports.RefinementReport.save')
@@ -441,11 +467,12 @@ class TestRefinementReport(unittest.TestCase):
         self,
         saveMock
     ):
-        self.report.state['project'] = 'my-second-subsubproject'
+        self.report.state['project'] = \
+            'my-first-project.my-first-subproject.my-second-subsubproject'
         self.report.next('sibling', direction=-1)
         self.assertEqual(
             self.report.state['project'],
-            'my-first-subsubproject',
+            'my-first-project.my-first-subproject.my-first-subsubproject',
         )
         self.assertTrue(saveMock.called)
 
@@ -453,14 +480,20 @@ class TestRefinementReport(unittest.TestCase):
     def test_refinement_can_set_previous_child_on_projects(self, saveMock):
         self.report.state['project'] = 'my-second-project'
         self.report.next('child', direction=-1)
-        self.assertEqual(self.report.state['project'], 'my-first-subproject')
+        self.assertEqual(
+            self.report.state['project'],
+            'my-first-project.my-first-subproject',
+        )
         self.assertTrue(saveMock.called)
 
     @patch('taskban.reports.RefinementReport.save')
     def test_refinement_can_set_previous_child_on_subprojects(self, saveMock):
-        self.report.state['project'] = 'my-second-subproject'
+        self.report.state['project'] = 'my-first-project.my-second-subproject'
         self.report.next('child', direction=-1)
-        self.assertEqual(self.report.state['project'], 'my-first-subsubproject')
+        self.assertEqual(
+            self.report.state['project'],
+            'my-first-project.my-first-subproject.my-first-subsubproject',
+        )
         self.assertTrue(saveMock.called)
 
     @patch('taskban.reports.RefinementReport.save')
@@ -468,7 +501,8 @@ class TestRefinementReport(unittest.TestCase):
         self,
         saveMock,
     ):
-        self.report.state['project'] = 'my-first-subsubproject'
+        self.report.state['project'] = \
+            'my-first-project.my-first-subproject.my-first-subsubproject'
         with self.assertRaises(IndexError):
             self.report.next('child', direction=-1)
         self.assertFalse(saveMock.called)
@@ -482,7 +516,7 @@ class TestRefinementReport(unittest.TestCase):
 
     @patch('taskban.reports.RefinementReport.save')
     def test_refinement_can_set_previous_parent_on_subprojects(self, saveMock):
-        self.report.state['project'] = 'my-first-subproject'
+        self.report.state['project'] = 'my-first-project.my-first-subproject'
         self.report.next('parent', direction=-1)
         self.assertEqual(self.report.state['project'], 'my-first-project')
         self.assertTrue(saveMock.called)
@@ -492,15 +526,24 @@ class TestRefinementReport(unittest.TestCase):
         self,
         saveMock,
     ):
-        self.report.state['project'] = 'my-first-subsubproject'
+        self.report.state['project'] = \
+            'my-first-project.my-first-subproject.my-first-subsubproject'
         self.report.next('parent', direction=-1)
-        self.assertEqual(self.report.state['project'], 'my-first-subproject')
+        self.assertEqual(
+            self.report.state['project'],
+            'my-first-project.my-first-subproject',
+        )
         self.assertTrue(saveMock.called)
 
     @patch('taskban.reports.RefinementReport.save')
     def test_refinement_can_jump_to_project(self, saveMock):
-        self.report.jump('my-first-subsubproject')
-        self.assertEqual(self.report.state['project'], 'my-first-subsubproject')
+        self.report.jump(
+            'my-first-project.my-first-subproject.my-first-subsubproject',
+        )
+        self.assertEqual(
+            self.report.state['project'],
+            'my-first-project.my-first-subproject.my-first-subsubproject',
+        )
         self.assertTrue(saveMock.called)
 
     @patch('taskban.reports.RefinementReport.save')

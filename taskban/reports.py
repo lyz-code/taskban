@@ -40,7 +40,6 @@ class Report():
 
     def load_yaml(self, yaml_path, no_fail=False):
         try:
-
             with open(os.path.expanduser(yaml_path), 'r') as f:
                 try:
                     return yaml.safe_load(f)
@@ -48,11 +47,12 @@ class Report():
                     log.error(e)
                     raise
         except FileNotFoundError as e:
-            log.error('Error opening yaml file {}'.format(yaml_path))
+            if not no_fail:
+                log.error('Error opening yaml file {}'.format(yaml_path))
             raise
 
     def save_yaml(self, yaml_path, dictionary):
-        with open(yaml_path, "w") as f:
+        with open(yaml_path, 'w+') as f:
             yaml.dump(dictionary, f, default_flow_style=False)
 
     def update_config_with_arguments(
@@ -252,7 +252,10 @@ class RefinementReport(Report):
             config_path,
             data_path,
         )
-        self.state_file = os.path.join(data_path, 'refinement.yaml')
+        self.state_file = os.path.join(
+            os.path.expanduser(data_path),
+            'refinement.yaml',
+        )
         self.backend.get_projects()
         self.load()
 
@@ -283,6 +286,7 @@ class RefinementReport(Report):
                 'start': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M'),
                 'project': sorted(self.backend.projects)[0],
             }
+            self.save()
 
     def find_project_position(self, search_key):
         '''Find the position of the project inside the projects. For example in:
@@ -295,8 +299,12 @@ class RefinementReport(Report):
 
         self.find_project_position(my-first-project) == [0, 0, 0]
         self.find_project_position(my-second-project) == [1, 0, 0]
-        self.find_project_position(my-first-subproject) == [0, 1, 0]
-        self.find_project_position(my-first-subsubproject) == [0, 0, 1]
+        self.find_project_position(
+            my-first-project.my-first-subproject,
+        ) == [0, 1, 0]
+        self.find_project_position(
+            my-first-project.my-first-subproject.my-first-subsubproject,
+        ) == [0, 0, 1]
 
         If it doesn't exist it will raise an error
         '''
@@ -308,14 +316,18 @@ class RefinementReport(Report):
             elif value != {}:
                 for subkey, subvalue in value.items():
                     subkey_position = sorted(value).index(subkey)
-                    if subkey == search_key:
+                    if '{}.{}'.format(key, subkey) == search_key:
                         return [key_position, subkey_position + 1, 0]
                     elif subvalue != {}:
                         for subsubkey, subsubvalue in subvalue.items():
                             subsubkey_position = sorted(subvalue).index(
                                 subsubkey,
                             )
-                            if subsubkey == search_key:
+                            if '{}.{}.{}'.format(
+                                key,
+                                subkey,
+                                subsubkey,
+                            ) == search_key:
                                 return [
                                     key_position,
                                     subkey_position + 1,
@@ -330,11 +342,12 @@ class RefinementReport(Report):
         else:
             subkey = sorted(self.backend.projects[key])[key_position[1] - 1]
             if key_position[2] == 0:
-                return subkey
+                return '{}.{}'.format(key, subkey)
             else:
-                return sorted(self.backend.projects[key][subkey])[
+                subsubkey = sorted(self.backend.projects[key][subkey])[
                     key_position[2] - 1
                 ]
+                return '{}.{}.{}'.format(key, subkey, subsubkey)
 
     def _next_child(self, parentage, direction):
         '''Set the next child'''
