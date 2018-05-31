@@ -25,7 +25,7 @@ def main():
     args = parser.parse_args()
     load_logger(args)
 
-    if args.subcommand == 'now':
+    if args.subcommand == 'ocupation':
         report = KanbanReport(
             start_date=args.period,
             task_data_path=args.task_data_path,

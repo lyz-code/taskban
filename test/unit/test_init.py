@@ -23,7 +23,7 @@ class TestMain(unittest.TestCase):
     @patch('taskban.load_parser')
     @patch('taskban.KanbanReport', autospect=True)
     def test_sync_subcommand(self, taskbanMock, parserMock):
-        parserMock.return_value.parse_args.return_value.subcommand = "now"
+        parserMock.return_value.parse_args.return_value.subcommand = "ocupation"
         main()
         self.assertTrue(
             taskbanMock.called

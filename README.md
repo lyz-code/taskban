@@ -61,26 +61,26 @@ time with the total time spent in each task:
 If not specified the `period` flag it will take the last day modified tasks.
 
 ```bash
-taskban now
+taskban ocupation
 ```
 
 The `period` flag must be a taskwarrior time compatible string, for example if
 we want to see the information of the tasks modified last week we could use
 
 ```bash
-taskban now -p 7d
+taskban ocupation -p 7d
 ```
 
 Or
 
 ```bash
-taskban now -p 1w
+taskban ocupation -p 1w
 ```
 
 You can also use fixed dates
 
 ```bash
-taskban now -p 1984-01-01
+taskban ocupation -p 1984-01-01
 ```
 
 If you want to also show the backlog use the `-b` flag

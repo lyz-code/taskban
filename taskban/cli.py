@@ -15,7 +15,7 @@ def load_parser():
 
     subparser = parser.add_subparsers(dest='subcommand', help='subcommands')
     subparser.required = True
-    now_parser = subparser.add_parser('now')
+    ocupation_parser = subparser.add_parser('ocupation')
     snapshot_parser = subparser.add_parser('snapshot')
 
     parser.add_argument(
@@ -41,14 +41,33 @@ def load_parser():
         help='Taskban data directory path',
     )
 
-    now_parser.add_argument("-p", "--period", type=str, default='1d',
-                            help='Taskwarrior compatible date string')
-    now_parser.add_argument("-b", "--backlog", action="store_true",
-                            help="Show backlog")
-    now_parser.add_argument("-i", "--inactive", action="store_true",
-                            help="Show inactive tasks")
-    snapshot_parser.add_argument("-p", "--period", type=str, default='100y',
-                                 help='Taskwarrior compatible date string')
+    ocupation_parser.add_argument(
+        "-p",
+        "--period",
+        type=str,
+        default='1d',
+        help='Taskwarrior compatible date string',
+    )
+    ocupation_parser.add_argument(
+        "-b",
+        "--backlog",
+        action="store_true",
+        help="Show backlog",
+    )
+    ocupation_parser.add_argument(
+        "-i",
+        "--inactive",
+        action="store_true",
+        help="Show inactive tasks",
+    )
+
+    snapshot_parser.add_argument(
+        "-p",
+        "--period",
+        type=str,
+        default='100y',
+        help='Taskwarrior compatible date string',
+    )
     argcomplete.autocomplete(parser)
     return parser
 
