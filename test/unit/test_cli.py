@@ -1,3 +1,4 @@
+import pytest
 import unittest
 import logging
 from unittest.mock import MagicMock, patch, call
@@ -77,6 +78,47 @@ class TestArgparse(unittest.TestCase):
     def test_snapshot_can_specify_period(self):
         parsed = self.parser.parse_args(['snapshot', '-p', '2d'])
         self.assertEqual(parsed.period, '2d')
+
+    def test_has_subcommand_refine(self):
+        parsed = self.parser.parse_args(['refine'])
+        self.assertEqual(parsed.subcommand, 'refine')
+
+    def test_refine_has_subcommand_next(self):
+        parsed = self.parser.parse_args(['refine', 'next'])
+        self.assertEqual(parsed.next_subcommand, 'next')
+
+    def test_refine_has_subcommand_next_child(self):
+        parsed = self.parser.parse_args(['refine', 'next', 'child'])
+        self.assertEqual(parsed.parentage, 'child')
+
+    def test_refine_has_subcommand_next_parent(self):
+        parsed = self.parser.parse_args(['refine', 'next', 'parent'])
+        self.assertEqual(parsed.parentage, 'parent')
+
+    def test_refine_has_subcommand_next_sibling(self):
+        parsed = self.parser.parse_args(['refine', 'next', 'sibling'])
+        self.assertEqual(parsed.parentage, 'sibling')
+
+    def test_refine_has_subcommand_prev(self):
+        parsed = self.parser.parse_args(['refine', 'prev'])
+        self.assertEqual(parsed.next_subcommand, 'prev')
+
+    def test_refine_has_subcommand_prev_child(self):
+        parsed = self.parser.parse_args(['refine', 'prev', 'child'])
+        self.assertEqual(parsed.parentage, 'child')
+
+    def test_refine_has_subcommand_prev_parent(self):
+        parsed = self.parser.parse_args(['refine', 'prev', 'parent'])
+        self.assertEqual(parsed.parentage, 'parent')
+
+    def test_refine_has_subcommand_prev_sibling(self):
+        parsed = self.parser.parse_args(['refine', 'prev', 'sibling'])
+        self.assertEqual(parsed.parentage, 'sibling')
+
+    def test_refine_has_subcommand_jump(self):
+        parsed = self.parser.parse_args(['refine', 'jump', 'my-first-project'])
+        self.assertEqual(parsed.next_subcommand, 'jump')
+        self.assertEqual(parsed.jump_project, 'my-first-project')
 
 
 class TestLogger(unittest.TestCase):
