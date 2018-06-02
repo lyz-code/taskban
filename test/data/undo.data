@@ -87,3 +87,15 @@ time 1520244858
 old [description:"Backlog task 1" entry:"1517438251" modified:"1517438418" pm:"backlog" project:"my-first-project" status:"pending" uuid:"fc840176-420c-477f-a1e2-4c021b8bc1e9"]
 new [description:"Backlog task 1" entry:"1517438251" est:"0" modified:"1520244858" pm:"backlog" project:"my-first-project" status:"pending" uuid:"fc840176-420c-477f-a1e2-4c021b8bc1e9"]
 ---
+time 1527694295
+new [description:"Subproject task 1" entry:"1527694295" modified:"1527694295" pm:"backlog" project:"my-first-project.my-first-subproject" status:"pending" uuid:"8f5fafa4-d477-4d94-a7cb-7133dbfdc9a3"]
+---
+time 1527694307
+new [description:"Subproject task 2" entry:"1527694307" modified:"1527694307" pm:"backlog" project:"my-first-project.my-second-subproject" status:"pending" uuid:"84780b84-5d4c-45e6-abe2-c57048bfd9e1"]
+---
+time 1527696253
+new [description:"Subsubproject task 1" entry:"1527696253" modified:"1527696253" pm:"backlog" project:"my-first-project.my-first-subproject.my-first-subsubproject" status:"pending" uuid:"a579e0cd-78c6-4e2b-a005-4571da8cd98f"]
+---
+time 1527696261
+new [description:"Subsubproject task 2" entry:"1527696261" modified:"1527696261" pm:"backlog" project:"my-first-project.my-first-subproject.my-second-subsubproject" status:"pending" uuid:"031a3e0f-ccff-4af2-b84c-6d8f245bd61f"]
+---

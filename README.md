@@ -53,7 +53,7 @@ pytest
 
 ## Retro reports
 
-### Board reports
+### Ocupation reports
 
 This reports will give the status of the Kanban/scrum board for a specified period of
 time with the total time spent in each task:
@@ -61,26 +61,26 @@ time with the total time spent in each task:
 If not specified the `period` flag it will take the last day modified tasks.
 
 ```bash
-taskban now
+taskban ocupation
 ```
 
 The `period` flag must be a taskwarrior time compatible string, for example if
 we want to see the information of the tasks modified last week we could use
 
 ```bash
-taskban now -p 7d
+taskban ocupation -p 7d
 ```
 
 Or
 
 ```bash
-taskban now -p 1w
+taskban ocupation -p 1w
 ```
 
 You can also use fixed dates
 
 ```bash
-taskban now -p 1984-01-01
+taskban ocupation -p 1984-01-01
 ```
 
 If you want to also show the backlog use the `-b` flag
@@ -96,3 +96,36 @@ This report will give you the next information
   and the estimate
 * *Description*: Description of the task
 
+## Refinement reports
+
+With this mode we'll checkout the backlog, order it and refine it for the next
+sprint.
+
+Taskban will be save the status of the refinementin a file in the share
+directory. So you can continue the refinement whenever you like.
+
+`taskban refine` will start the refinement process, and it will give you a `task
+pro:{{ item }} list` for the first project, If you execute again `taskban refine` it
+will give you the same `taskban pro:{{ item }} list`.
+
+With the `next` and `prev` methods you'll navigate through the projects. Keep in
+mind that `my-project` is the parent of `my-project.my-subproject` and
+`my-subproject` is the child of `my-project`. Also `my-project` and
+`my-other-project` are siblings.
+
+With those ideas in mind you can use the following commands:
+
+* `taskban refine next parent`: will jump to the next parent
+* `taskban refine next child`: will jump to the next child
+* `taskban refine next sibling`: will jump to the next sibling
+* `taskban refine prev parent`: will jump to the previous parent
+* `taskban refine prev child`: will jump to the previous child
+* `taskban refine prev sibling`: will jump to the previous sibling
+
+If you execute `taskban refine next` it will try to jump to the next child, if
+it doesn't exist it will try to jump to the next sibling, if it doesn't exist it
+will go to the next parent. Same happens in reverse if you use `taskban refine
+prev`.
+
+Last but not least, if you want to jump to a specific project execute `taskban
+refine jump {{ project }}`

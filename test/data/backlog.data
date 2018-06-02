@@ -25,3 +25,7 @@
 {"description":"est:0","entry":"20180131T223731Z","modified":"20180305T101019Z","pm":"backlog","project":"my-first-project","status":"pending","uuid":"fc840176-420c-477f-a1e2-4c021b8bc1e9"}
 {"description":"Backlog task 1","entry":"20180131T223731Z","modified":"20180131T224018Z","pm":"backlog","project":"my-first-project","status":"pending","uuid":"fc840176-420c-477f-a1e2-4c021b8bc1e9"}
 {"description":"Backlog task 1","entry":"20180131T223731Z","est":0,"modified":"20180305T101418Z","pm":"backlog","project":"my-first-project","status":"pending","uuid":"fc840176-420c-477f-a1e2-4c021b8bc1e9"}
+{"description":"Subproject task 1","entry":"20180530T153135Z","modified":"20180530T153135Z","pm":"backlog","project":"my-first-project.my-first-subproject","status":"pending","uuid":"8f5fafa4-d477-4d94-a7cb-7133dbfdc9a3"}
+{"description":"Subproject task 2","entry":"20180530T153147Z","modified":"20180530T153147Z","pm":"backlog","project":"my-first-project.my-second-subproject","status":"pending","uuid":"84780b84-5d4c-45e6-abe2-c57048bfd9e1"}
+{"description":"Subsubproject task 1","entry":"20180530T160413Z","modified":"20180530T160413Z","pm":"backlog","project":"my-first-project.my-first-subproject.my-first-subsubproject","status":"pending","uuid":"a579e0cd-78c6-4e2b-a005-4571da8cd98f"}
+{"description":"Subsubproject task 2","entry":"20180530T160421Z","modified":"20180530T160421Z","pm":"backlog","project":"my-first-project.my-first-subproject.my-second-subsubproject","status":"pending","uuid":"031a3e0f-ccff-4af2-b84c-6d8f245bd61f"}

@@ -106,28 +106,6 @@ objective/subobjective/(behaviors|tasks), once we've got them set up maybe in
 the taskban config, will calculate the urgency of each taskwarrior project, the
 urgency factor of `pri`, `ov` and it will set them on the taskwarrior config.
 
-# Sprint refinement
-
-With this mode we'll checkout the backlog, order it and refine it for the next
-sprint.
-
-We'll have a `taskban ref start` and `taskban ref end` to set up the start and
-end of an sprint refinement. That will be saved in a file in the share dir of
-taskban. So you can continue the refinement whenever you like.
-
-Once the refinement has started:
-
-* `taskban ref` will give you a `task pro:{{ item }} list` for the first project,
-* If you hit again `taskban ref` it will give you the same `taskban pro:{{ item
-  }} list`.
-* If you hit `taskban ref next` it will jump to the next project (subproject)
-* If you want to go back `taskban ref prev`
-* If you want to list the projects `taskban ref list`
-* If you want to jump to a project `taskban ref jump {{ project }}`
-
-`taskban` will save wherever you are in the share file, so you can stop the
-refinement whenever you want and continue later
-
 # Task mangling
 
 ## Add task to backlog
