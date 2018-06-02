@@ -202,7 +202,7 @@ class KanbanReport(Report):
                (state == 'backlog' and show_backlog is False):
                 continue
             out.write('\n\n## {}'.format(state))
-            for project in self.snapshot[state].keys():
+            for project in sorted(self.snapshot[state].keys()):
                 dataset = []
                 for task in self.snapshot[state][project]:
                     if task['active_time'] > 0 or show_inactive:
@@ -215,10 +215,11 @@ class KanbanReport(Report):
                     if len(dataset) == self.config['max_tasks_per_state']:
                         break
                 if len(dataset) > 0:
+                    from operator import itemgetter
                     out.write('\n\n### {}\n\n'.format(project))
                     out.write(
                         tabulate(
-                            dataset,
+                            sorted(dataset, key=itemgetter(4)),
                             headers=[
                                 'ID',
                                 'Est',
