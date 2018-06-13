@@ -6,7 +6,8 @@ import unittest
 import datetime
 import tempfile
 from unittest.mock import patch
-from taskban.reports import RefinementReport, KanbanReport, Report
+from taskban.reports import PlanningReport, RefinementReport, KanbanReport, \
+    Report
 
 
 class TestReport(unittest.TestCase):
@@ -551,6 +552,41 @@ class TestRefinementReport(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.report.jump('unexisting-project')
         self.assertFalse(saveMock.called)
+
+
+class TestPlanningReport(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        shutil.rmtree(self.tmp)
+        shutil.copytree('test/data', os.path.join(self.tmp, 'data'))
+        shutil.copytree('test/config', os.path.join(self.tmp, 'config'))
+        self.config_path = os.path.join(self.tmp, 'config')
+        self.data_path = os.path.join(self.tmp, 'data')
+        self.report = PlanningReport(
+            task_data_path=self.data_path,
+            taskrc_path=os.path.join(self.config_path, 'taskrc'),
+            config_path=os.path.join(self.config_path, 'config.yaml'),
+            data_path=self.data_path,
+        )
+        self.state_file = os.path.join(self.data_path, 'refinement.yaml')
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp)
+
+    def test_plan_can_get_affected_tasks(self):
+        self.report.get_affected_tasks('backlog', 'my-first-project')
+        self.assertEqual(len(self.report.tasks), 6)
+        self.assertEqual(self.report.tasks[0]['description'], 'Backlog task 1')
+
+    def test_plan_gets_todo_affected_tasks_by_default(self):
+        self.report.get_affected_tasks()
+        self.assertEqual(len(self.report.tasks), 3)
+        self.assertEqual(self.report.tasks[0]['description'], 'Todo task 3')
+
+    def test_plan_gets_affected_tasks_can_filter_by_pm_only(self):
+        self.report.get_affected_tasks('doing')
+        self.assertEqual(len(self.report.tasks), 2)
+        self.assertEqual(self.report.tasks[0]['description'], 'Doing task 1')
 
 
 if __name__ == '__main__':

@@ -417,3 +417,37 @@ class RefinementReport(Report):
             self.save()
         except KeyError:
             raise
+
+
+class PlanningReport(Report):
+    """Planning report, it will help in the planning of the sprint """
+
+    def __init__(
+        self,
+        start_date='now',
+        task_data_path=None,
+        taskrc_path=None,
+        config_path=None,
+        data_path=None,
+    ):
+
+        super(PlanningReport, self).__init__(
+            start_date,
+            task_data_path,
+            taskrc_path,
+            config_path,
+            data_path,
+        )
+
+    def get_affected_tasks(self, task_state='todo', project=None):
+        if project is None:
+            self.tasks = self.backend.tasks.filter(
+                pm=task_state,
+                status='pending',
+            )
+        else:
+            self.tasks = self.backend.tasks.filter(
+                project=project,
+                pm=task_state,
+                status='pending',
+            )
