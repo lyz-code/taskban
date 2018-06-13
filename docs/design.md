@@ -2,7 +2,52 @@ In this document we'll write the design docs for the different features
 
 # Sprint review
 
-## Objectives reports
+## Objectives report
+
+We'll have a new uda `it` called `Item Type` which will be one of:
+* history
+* epic
+* behavior
+* project
+
+The `history` type is the common tasks. `epic` are the tasks that have a meaning
+towards a life objective, those are the ones defined in the objectives.md file
+under project.management. `behaviors` are behaviors that I want to implement or
+I'm implementing. And `project` will be a type of issue managed by taskban to
+set up the priority and ov of the different projects and subprojects.
+
+I've set reports for each of this types so it's cleaner to see them when you
+want to
+
+### Projects
+
+If you change the ov or priority of the projects, taskban will recalculate the
+urgency score and set it up on your config file.
+
+As both history and epics share the project you'll priorize both at the same
+time.
+
+They'll have an uda called `td` (`task_description`) where we'll store the
+information of the task
+
+### Behaviors
+
+At the end of the sprint we'll execute a behavior report, in which the user will
+answer yes or no if they have accomplished the desired behavior (only the ones
+with `pm:todo`), if you have accomplished it, it will reduce it's priority by
+X points and if you haven't it will increase it's importance.
+
+In each sprint you should focus on the Y first behaviors.
+
+### Epics
+
+Epics are a way of organize what you want to do in each project. It's meant to
+be breaking points in them.
+
+Once you've got all set up, you should priorize them, and adjust the project ov
+and pri so they match your desired order.
+
+## Deprecated Objectives reports
 
 We'll create a report that will take a yaml of objectives and return a score of
 completion of the objectives.
@@ -98,13 +143,35 @@ correctly done by sprint
 
 # Sprint planning
 
-## Objectives sync
+## Sprint task ordering
 
-Given the objectives yaml template shown [here](#objectives-report), we need
-a tool that can specify the weights of the
-objective/subobjective/(behaviors|tasks), once we've got them set up maybe in
-the taskban config, will calculate the urgency of each taskwarrior project, the
-urgency factor of `pri`, `ov` and it will set them on the taskwarrior config.
+In the last sprint planning I saw that the task ordering through the ov and pri of
+project, subproject and task is not enough, sometimes you need to modify the
+order of some tasks without affecting the rest of them.
+
+We need a tool to order the items in the backlog.
+
+The easiest way I can think about it is using `taskban plan {{ task_id }} up`,
+it will take the current task score, check the urgency of the two tasks above,
+do the average value, subtract it from the task urgency and apply it as the
+`ord` value. The opposite will be `taskban plan {{ task_id }} down`.
+
+For this we'll need to set up the `ord` steps so as no to clutter the
+taskwarrior config. At a start we'll assume that the taskwarrior lines for the
+`ord` urgency are entered manually, so taskban won't manage them.
+
+We have to be careful to keep an eye on the ord values of the tasks because it
+might be used against the ov and pri values and end up doing things not so
+important.
+
+* If the tasks above have the same value, pad them to the next ones. If you pad
+  the next ones, be sure that you don't enter the other pm levels in the padding
+
+* You should be able to give the `plan up` a query so you can move up the tasks
+  in the backlog of the project X
+
+* Add also the option to instead of adding positive ord, add negative ord to the
+  above task. The one that has more margin is the one that gets padded.
 
 # Task mangling
 
