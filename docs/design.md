@@ -173,6 +173,15 @@ important.
 * Add also the option to instead of adding positive ord, add negative ord to the
   above task. The one that has more margin is the one that gets padded.
 
+## Sprint goal checker
+
+With this tool you'll set up the maximum value of an uda (such as `est`) and it
+will check if your `todo` + `doing` + `blocked` tasks add up that score.
+
+* It should also be a good idea to select the % of points spent in each project.
+  of the % of each project you should be able to specify the % of the
+  subprojects, and so on.
+
 # Task mangling
 
 ## Add task to backlog
