@@ -438,8 +438,10 @@ class PlanningReport(Report):
             config_path,
             data_path,
         )
+        self.get_affected_tasks()
 
     def get_affected_tasks(self, task_state='todo', project=None):
+        '''Get all tasks filtered by task_state and possibly by project'''
         if project is None:
             self.tasks = self.backend.tasks.filter(
                 pm=task_state,
@@ -451,3 +453,13 @@ class PlanningReport(Report):
                 pm=task_state,
                 status='pending',
             )
+
+    def _get_task_position(self, task_id):
+        'Get task index inside the self.tasks list for a given task_id'
+        return [
+            index for index, value in enumerate(self.tasks)
+            if value['id'] == task_id
+        ][0]
+
+    def move_task_up(self, task_id):
+        pass

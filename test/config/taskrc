@@ -6,5 +6,16 @@ uda.pm.default=backlog
 uda.est.type=numeric
 uda.est.label=Estimate
 
+uda.ord.type=numeric
+uda.ord.label=Ordering
+urgency.uda.ord.1.coefficient=1
+urgency.uda.ord.1.000000.coefficient=1
+urgency.uda.ord.1.5.coefficient=1.5
+urgency.uda.ord.1.500000.coefficient=1.5
+urgency.uda.ord.2.coefficient=2
+urgency.uda.ord.2.000000.coefficient=2
+urgency.uda.ord.3.coefficient=3
+urgency.uda.ord.3.000000.coefficient=3
+
 history.cache=100y
 history.cache.location=test/data/history.cache

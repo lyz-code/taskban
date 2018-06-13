@@ -588,6 +588,16 @@ class TestPlanningReport(unittest.TestCase):
         self.assertEqual(len(self.report.tasks), 2)
         self.assertEqual(self.report.tasks[0]['description'], 'Doing task 1')
 
+    def test_plan_can_get_task_position(self):
+        self.assertEqual(self.report._get_task_position(6), 2)
+
+    def test_plan_can_move_task_up_with_enough_space(self):
+        self.report.get_affected_tasks('backlog', 'my-first-project')
+        self.report.move_task_up(3)
+        task = self.report.backend.task.get(id=3)
+        self.assertEqual(task['urgency'], 4.223)
+        self.assertEqual(task['ord'], 1.5)
+
 
 if __name__ == '__main__':
     unittest.main()
