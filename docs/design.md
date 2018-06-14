@@ -170,10 +170,14 @@ important.
 * You should be able to give the `plan up` a query so you can move up the tasks
   in the backlog of the project X
 
-* Add also the option to instead of adding positive ord, add negative ord to the
-  above task. The one that has more margin is the one that gets padded.
+Pending:
 
 * If the desired ord doesn't exist in the config create it
+* Create the move_down method
+* Create the argparse
+* Create the main directives
+* Update Readme
+* Increase version of setup
 
 ## Sprint goal checker
 
