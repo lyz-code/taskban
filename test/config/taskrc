@@ -8,14 +8,22 @@ uda.est.label=Estimate
 
 uda.ord.type=numeric
 uda.ord.label=Ordering
+urgency.uda.ord.0.1.coefficient=0.1
+urgency.uda.ord.0.100000.coefficient=0.1
+urgency.uda.ord.0.2.coefficient=0.2
+urgency.uda.ord.0.200000.coefficient=0.2
 urgency.uda.ord.1.coefficient=1
 urgency.uda.ord.1.000000.coefficient=1
 urgency.uda.ord.1.5.coefficient=1.5
 urgency.uda.ord.1.500000.coefficient=1.5
 urgency.uda.ord.2.coefficient=2
 urgency.uda.ord.2.000000.coefficient=2
+urgency.uda.ord.2.5.coefficient=2.5
+urgency.uda.ord.2.500000.coefficient=2.5
 urgency.uda.ord.3.coefficient=3
 urgency.uda.ord.3.000000.coefficient=3
+urgency.uda.ord.3.5.coefficient=3.5
+urgency.uda.ord.3.500000.coefficient=3.5
 
 history.cache=100y
 history.cache.location=test/data/history.cache

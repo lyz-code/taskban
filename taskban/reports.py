@@ -461,5 +461,33 @@ class PlanningReport(Report):
             if value['id'] == task_id
         ][0]
 
+    def _increase_task_ord(self, task_id, ord_delta):
+        '''Method to increase the ord of a desired task'''
+        task_index = self._get_task_position(task_id)
+        if self.tasks[task_index]['ord'] is None:
+            self.tasks[task_index]['ord'] = ord_delta
+        else:
+            self.tasks[task_index]['ord'] += ord_delta
+        self.tasks[task_index].save()
+
     def move_task_up(self, task_id):
-        pass
+        task_index = self._get_task_position(task_id)
+        urg_delta_to_next_task = (self.tasks[task_index-1]['urgency'] -
+                                  self.tasks[task_index]['urgency'])
+        if task_index-1 < 0:
+            return
+        elif task_index-2 < 0:
+            urg_step_above_next_task = urg_delta_to_next_task/2
+        else:
+            urg_step_above_next_task = (self.tasks[task_index-2]['urgency'] -
+                                        self.tasks[task_index-1]['urgency'])/2
+            if urg_step_above_next_task < self.config['minimum_ord_step']:
+                self._increase_task_ord(
+                    self.tasks[task_index-2]['id'],
+                    2 * self.config['minimum_ord_step'],
+                )
+                urg_step_above_next_task = self.config['minimum_ord_step']
+        self._increase_task_ord(
+            self.tasks[task_index]['id'],
+            urg_delta_to_next_task + urg_step_above_next_task,
+        )

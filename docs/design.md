@@ -173,6 +173,8 @@ important.
 * Add also the option to instead of adding positive ord, add negative ord to the
   above task. The one that has more margin is the one that gets padded.
 
+* If the desired ord doesn't exist in the config create it
+
 ## Sprint goal checker
 
 With this tool you'll set up the maximum value of an uda (such as `est`) and it

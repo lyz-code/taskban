@@ -52,3 +52,7 @@
 {"description":"Backlog task 3","entry":"20180131T223737Z","modified":"20180613T165523Z","ord":1,"pm":"backlog","project":"my-second-project","status":"pending","uuid":"58499efa-02f7-488b-91a1-41e7b10325ed"}
 {"description":"Backlog task 3","entry":"20180131T223737Z","modified":"20180131T224035Z","pm":"backlog","project":"my-second-project","status":"pending","uuid":"58499efa-02f7-488b-91a1-41e7b10325ed"}
 {"description":"Backlog task 3","entry":"20180131T223737Z","modified":"20180613T165632Z","ord":1,"pm":"backlog","project":"my-second-project","status":"pending","uuid":"58499efa-02f7-488b-91a1-41e7b10325ed"}
+{"description":"Backlog task 3","entry":"20180131T223737Z","modified":"20180614T064253Z","ord":1.5,"pm":"backlog","project":"my-second-project","status":"pending","uuid":"58499efa-02f7-488b-91a1-41e7b10325ed"}
+{"description":"Backlog task 3","entry":"20180131T223737Z","modified":"20180613T165632Z","ord":1,"pm":"backlog","project":"my-second-project","status":"pending","uuid":"58499efa-02f7-488b-91a1-41e7b10325ed"}
+{"description":"Backlog task 3","entry":"20180131T223737Z","modified":"20180614T064338Z","ord":1.5,"pm":"backlog","project":"my-second-project","status":"pending","uuid":"58499efa-02f7-488b-91a1-41e7b10325ed"}
+{"description":"Backlog task 3","entry":"20180131T223737Z","modified":"20180613T165632Z","ord":1,"pm":"backlog","project":"my-second-project","status":"pending","uuid":"58499efa-02f7-488b-91a1-41e7b10325ed"}
