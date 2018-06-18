@@ -469,6 +469,19 @@ class PlanningReport(Report):
         else:
             self.tasks[task_index]['ord'] += ord_delta
         self.tasks[task_index].save()
+        try:
+            self.backend.config[
+                'urgency.uda.ord.{}.coefficient'.format(ord_delta),
+            ]
+        except KeyError:
+            self.backend.config[
+                'urgency.uda.ord.{}.coefficient'.format(ord_delta)
+            ] = ord_delta
+            self.backend.config[
+                'urgency.uda.ord.{0:06f}.coefficient'.format(ord_delta)
+            ] = ord_delta
+            self.backend.save_config()
+
 
     def move_task_up(self, task_id):
         task_index = self._get_task_position(task_id)

@@ -170,9 +170,10 @@ important.
 * You should be able to give the `plan up` a query so you can move up the tasks
   in the backlog of the project X
 
+* If the desired ord doesn't exist in the config create it
+
 Pending:
 
-* If the desired ord doesn't exist in the config create it
 * Create the move_down method
 * Create the argparse
 * Create the main directives

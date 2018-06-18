@@ -603,6 +603,22 @@ class TestPlanningReport(unittest.TestCase):
         task = self.report.backend.tasks.get(id=1)
         self.assertEqual(task['ord'], 3.1)
 
+    def test_plan_increase_ord_of_a_task_edits_the_taskrc(self):
+        self.report.get_affected_tasks('backlog')
+        self.report._increase_task_ord(1, 0.6)
+        task = self.report.backend.tasks.get(id=1)
+        self.assertEqual(task['ord'], 3.6)
+        with open(self.report.backend.taskrc_location, 'r') as f:
+            config_content = f.read().splitlines()
+            self.assertIn(
+                "urgency.uda.ord.0.6.coefficient=0.6",
+                config_content,
+            )
+            self.assertIn(
+                "urgency.uda.ord.0.600000.coefficient=0.6",
+                config_content,
+            )
+
     def test_plan_can_move_task_up_with_enough_space(self):
         self.report.get_affected_tasks('backlog')
         self.report.move_task_up(3)
