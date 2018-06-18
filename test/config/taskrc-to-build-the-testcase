@@ -1,4 +1,5 @@
 data.location=../data
+urgency.age.coefficient=0
 uda.pm.type=string
 uda.pm.label=Kanban
 uda.pm.values=todo,doing,done,blocked,test,backlog

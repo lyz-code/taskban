@@ -608,21 +608,21 @@ class TestPlanningReport(unittest.TestCase):
         self.report.move_task_up(3)
         task = self.report.backend.tasks.get(id=3)
         self.assertEqual(task['ord'], 2.5)
-        self.assertEqual(round(task['urgency'], 3), 4.229)
+        self.assertEqual(round(task['urgency'], 3), 3.5)
 
     def test_plan_can_move_task_up_without_two_tasks_above_it_half_step(self):
         self.report.get_affected_tasks('backlog')
         self.report.move_task_up(2)
         task = self.report.backend.tasks.get(id=2)
         self.assertEqual(task['ord'], 3.5)
-        self.assertEqual(round(task['urgency'], 3), 5.229)
+        self.assertEqual(round(task['urgency'], 3), 4.5)
 
     def test_plan_move_up_does_nothing_if_on_top(self):
         self.report.get_affected_tasks('backlog')
         self.report.move_task_up(1)
         task = self.report.backend.tasks.get(id=1)
         self.assertEqual(task['ord'], 3)
-        self.assertEqual(round(task['urgency'], 3), 4.729)
+        self.assertEqual(round(task['urgency'], 3), 4)
 
     def test_plan_move_up_pads_tasks_above_if_there_is_no_space(self):
         self.report.move_task_up(6)
@@ -630,11 +630,11 @@ class TestPlanningReport(unittest.TestCase):
         task2 = self.report.backend.tasks.get(id=5)
         task3 = self.report.backend.tasks.get(id=6)
         self.assertEqual(task1['ord'], 0.2)
-        self.assertEqual(round(task1['urgency'], 3), 1.929)
+        self.assertEqual(round(task1['urgency'], 3), 1.2)
         self.assertEqual(task2['ord'], None)
-        self.assertEqual(round(task2['urgency'], 3), 1.729)
+        self.assertEqual(round(task2['urgency'], 3), 1.)
         self.assertEqual(task3['ord'], 0.1)
-        self.assertEqual(round(task3['urgency'], 3), 1.829)
+        self.assertEqual(round(task3['urgency'], 3), 1.1)
 
 
 if __name__ == '__main__':
