@@ -482,25 +482,39 @@ class PlanningReport(Report):
             ] = ord_delta
             self.backend.save_config()
 
-
-    def move_task_up(self, task_id):
+    def _move_task(self, task_id, direction):
         task_index = self._get_task_position(task_id)
-        urg_delta_to_next_task = (self.tasks[task_index-1]['urgency'] -
-                                  self.tasks[task_index]['urgency'])
-        if task_index-1 < 0:
+        if task_index-direction < 0 or \
+                task_index-direction > len(self.tasks) - 1:
+            # If it's on the extremes return
             return
-        elif task_index-2 < 0:
+
+        urg_delta_to_next_task = (self.tasks[task_index-direction]['urgency'] -
+                                  self.tasks[task_index]['urgency'])
+
+        if task_index-2*direction < 0 or \
+                task_index-2*direction > len(self.tasks) - 1:
+            # If it's one before the last return half the step
             urg_step_above_next_task = urg_delta_to_next_task/2
         else:
-            urg_step_above_next_task = (self.tasks[task_index-2]['urgency'] -
-                                        self.tasks[task_index-1]['urgency'])/2
-            if urg_step_above_next_task < self.config['minimum_ord_step']:
+            urg_step_above_next_task = (
+                self.tasks[task_index-2*direction]['urgency'] -
+                self.tasks[task_index-direction]['urgency']
+            )/2
+            if abs(urg_step_above_next_task) < self.config['minimum_ord_step']:
                 self._increase_task_ord(
-                    self.tasks[task_index-2]['id'],
-                    2 * self.config['minimum_ord_step'],
+                    self.tasks[task_index-2*direction]['id'],
+                    2 * direction * self.config['minimum_ord_step'],
                 )
-                urg_step_above_next_task = self.config['minimum_ord_step']
+                urg_step_above_next_task = \
+                    self.config['minimum_ord_step'] * direction
         self._increase_task_ord(
             self.tasks[task_index]['id'],
             urg_delta_to_next_task + urg_step_above_next_task,
         )
+
+    def move_task_up(self, task_id):
+        self._move_task(task_id, 1)
+
+    def move_task_down(self, task_id):
+        self._move_task(task_id, -1)

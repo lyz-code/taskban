@@ -10,6 +10,8 @@ uda.est.label=Estimate
 
 uda.ord.type=numeric
 uda.ord.label=Order.Modifier
+urgency.uda.ord.-0.5.coefficient=-0.5
+urgency.uda.ord.-0.500000.coefficient=-0.5
 urgency.uda.ord.1.coefficient=1
 urgency.uda.ord.1.000000.coefficient=1
 urgency.uda.ord.2.coefficient=2

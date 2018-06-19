@@ -652,6 +652,40 @@ class TestPlanningReport(unittest.TestCase):
         self.assertEqual(task3['ord'], 0.1)
         self.assertEqual(round(task3['urgency'], 3), 1.1)
 
+    def test_plan_can_move_task_down_with_enough_space(self):
+        self.report.get_affected_tasks('backlog')
+        self.report.move_task_down(1)
+        task = self.report.backend.tasks.get(id=1)
+        self.assertEqual(task['ord'], 1.5)
+        self.assertEqual(round(task['urgency'], 3), 2.5)
+
+    def test_plan_can_move_task_down_without_two_tasks_below_it_half_step(self):
+        self.report.get_affected_tasks('doing')
+        self.report.move_task_down(7)
+        task = self.report.backend.tasks.get(id=7)
+        self.assertEqual(task['ord'], -0.75)
+        self.assertEqual(round(task['urgency'], 3), 0.25)
+
+    def test_plan_move_down_does_nothing_if_on_bottom(self):
+        self.report.get_affected_tasks()
+        self.report.move_task_down(6)
+        task = self.report.backend.tasks.get(id=6)
+        self.assertEqual(task['ord'], None)
+        self.assertEqual(round(task['urgency'], 3), 1)
+
+    def test_plan_move_down_pads_tasks_below_if_there_is_no_space(self):
+        import pdb; pdb.set_trace()  # XXX BREAKPOINT
+        self.report.move_task_down(4)
+        task1 = self.report.backend.tasks.get(id=4)
+        task2 = self.report.backend.tasks.get(id=5)
+        task3 = self.report.backend.tasks.get(id=6)
+        self.assertEqual(task1['ord'], -0.1)
+        self.assertEqual(round(task1['urgency'], 3), 0.9)
+        self.assertEqual(task2['ord'], None)
+        self.assertEqual(round(task2['urgency'], 3), 1.)
+        self.assertEqual(task3['ord'], -0.2)
+        self.assertEqual(round(task3['urgency'], 3), 0.8)
+
 
 if __name__ == '__main__':
     unittest.main()

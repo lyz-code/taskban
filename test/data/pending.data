@@ -5,7 +5,7 @@
 [description:"Todo task 2" entry:"1517438292" modified:"1517438418" pm:"todo" project:"my-first-project" status:"pending" uuid:"a30e731f-45a9-4ace-a47b-7e1410b340e8"]
 [description:"Todo task 1" entry:"1517438299" modified:"1517438435" pm:"todo" project:"my-second-project" status:"pending" uuid:"18fb9d7c-e1e3-4402-8929-03efb11e82c3"]
 [description:"Doing task 1" entry:"1517438308" modified:"1517438418" pm:"doing" project:"my-first-project" status:"pending" uuid:"860ed259-fbf6-4d88-996d-19000351a51a"]
-[description:"Doing task 2" entry:"1517438312" modified:"1517438435" pm:"doing" project:"my-second-project" status:"pending" uuid:"2bb03904-3757-4b58-858a-1e01c905ecc8"]
+[description:"Doing task 2" entry:"1517438312" modified:"1529424694" ord:"-0.5" pm:"doing" project:"my-second-project" status:"pending" uuid:"2bb03904-3757-4b58-858a-1e01c905ecc8"]
 [description:"Testing task 2" entry:"1517438344" modified:"1517438418" pm:"test" project:"my-first-project" status:"pending" uuid:"f0325614-fb9f-47fa-a5d0-1bd7ae3b68aa"]
 [description:"Testing task 1" entry:"1517438347" modified:"1517438435" pm:"test" project:"my-second-project" status:"pending" uuid:"3eb88a23-bcc7-4c7d-8faf-5051597c1a20"]
 [description:"Subproject task 1" entry:"1527694295" modified:"1527694295" pm:"backlog" project:"my-first-project.my-first-subproject" status:"pending" uuid:"8f5fafa4-d477-4d94-a7cb-7133dbfdc9a3"]
