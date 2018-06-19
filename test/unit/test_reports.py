@@ -674,7 +674,6 @@ class TestPlanningReport(unittest.TestCase):
         self.assertEqual(round(task['urgency'], 3), 1)
 
     def test_plan_move_down_pads_tasks_below_if_there_is_no_space(self):
-        import pdb; pdb.set_trace()  # XXX BREAKPOINT
         self.report.move_task_down(4)
         task1 = self.report.backend.tasks.get(id=4)
         task2 = self.report.backend.tasks.get(id=5)

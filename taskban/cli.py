@@ -107,6 +107,19 @@ def load_parser():
         metavar='project',
     )
 
+    plan_parser = subparser.add_parser('plan')
+    plan_parser.add_argument(
+        'task_id',
+        type=int,
+        help='Taskwarrior task ID',
+    )
+    plan_parser.add_argument(
+        'plan_direction',
+        choices=['up', 'down'],
+        help='Direction to move the task',
+        metavar='direction',
+    )
+
     argcomplete.autocomplete(parser)
     return parser
 
