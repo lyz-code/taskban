@@ -119,6 +119,21 @@ def load_parser():
         help='Direction to move the task',
         metavar='direction',
     )
+    plan_parser.add_argument(
+        '--project',
+        type=str,
+        help='Filter just a specific project',
+        metavar='project',
+        nargs='?'
+    )
+
+    plan_parser.add_argument(
+        '--task_status',
+        type=str,
+        help='Filter just a specific task status',
+        nargs='?',
+        default='todo'
+    )
 
     argcomplete.autocomplete(parser)
     return parser

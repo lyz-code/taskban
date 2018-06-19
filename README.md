@@ -101,7 +101,7 @@ This report will give you the next information
 With this mode we'll checkout the backlog, order it and refine it for the next
 sprint.
 
-Taskban will be save the status of the refinementin a file in the share
+Taskban will be save the status of the refinement in a file in the share
 directory. So you can continue the refinement whenever you like.
 
 `taskban refine` will start the refinement process, and it will give you a `task
@@ -129,3 +129,23 @@ prev`.
 
 Last but not least, if you want to jump to a specific project execute `taskban
 refine jump {{ project }}`
+
+## Planning reports
+
+In the last sprint planning I saw that the task ordering through the ov and pri of
+project, subproject and task is not enough, sometimes you need to modify the
+order of some tasks without affecting the rest of them.
+
+We needed a tool to order the items in the backlog.
+
+You can use `taskban plan {{ task_id }} up` or `taskban plan {{ task_id }} down`
+to move the tasks inside their `pm` status.
+
+Be careful to keep an eye on the ord values of the tasks because it might be
+used against the ov and pri values and end up doing things not so important.
+
+You can move tasks only on a project with the `--project {{ project}}` flag, or
+you can specify the task status with `--task_status {{ task_status }}`, that
+needs to match the `pm` Taskwarrior UDA.
+
+If the desired `ord` doesn't exist in the config, it will create it.

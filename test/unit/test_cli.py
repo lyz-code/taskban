@@ -148,6 +148,23 @@ class TestArgparse(unittest.TestCase):
         parsed = self.parser.parse_args(['plan', '1', 'down'])
         self.assertEqual(parsed.plan_direction, 'down')
 
+    def test_plan_can_specify_pm_value(self):
+        parsed = self.parser.parse_args(
+            ['plan', '--task_status', 'doing', '1', 'up'],
+        )
+        self.assertEqual(parsed.task_status, 'doing')
+
+    def test_plan_has_default_pm_value(self):
+        parsed = self.parser.parse_args(
+            ['plan', '1', 'up'],
+        )
+        self.assertEqual(parsed.task_status, 'todo')
+
+    def test_plan_can_specify_project_value(self):
+        parsed = self.parser.parse_args(
+            ['plan', '--project', 'test', '1', 'up'],
+        )
+        self.assertEqual(parsed.project, 'test')
 
 class TestLogger(unittest.TestCase):
     @patch('taskban.cli.logging')

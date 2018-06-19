@@ -429,6 +429,8 @@ class PlanningReport(Report):
         taskrc_path=None,
         config_path=None,
         data_path=None,
+        task_state='todo',
+        project=None,
     ):
 
         super(PlanningReport, self).__init__(
@@ -438,7 +440,7 @@ class PlanningReport(Report):
             config_path,
             data_path,
         )
-        self.get_affected_tasks()
+        self.get_affected_tasks(task_state, project)
 
     def get_affected_tasks(self, task_state='todo', project=None):
         '''Get all tasks filtered by task_state and possibly by project'''

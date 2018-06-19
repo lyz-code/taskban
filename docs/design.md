@@ -143,43 +143,6 @@ correctly done by sprint
 
 # Sprint planning
 
-## Sprint task ordering
-
-In the last sprint planning I saw that the task ordering through the ov and pri of
-project, subproject and task is not enough, sometimes you need to modify the
-order of some tasks without affecting the rest of them.
-
-We need a tool to order the items in the backlog.
-
-The easiest way I can think about it is using `taskban plan {{ task_id }} up`,
-it will take the current task score, check the urgency of the two tasks above,
-do the average value, subtract it from the task urgency and apply it as the
-`ord` value. The opposite will be `taskban plan {{ task_id }} down`.
-
-For this we'll need to set up the `ord` steps so as no to clutter the
-taskwarrior config. At a start we'll assume that the taskwarrior lines for the
-`ord` urgency are entered manually, so taskban won't manage them.
-
-We have to be careful to keep an eye on the ord values of the tasks because it
-might be used against the ov and pri values and end up doing things not so
-important.
-
-* If the tasks above have the same value, pad them to the next ones. If you pad
-  the next ones, be sure that you don't enter the other pm levels in the padding
-
-* You should be able to give the `plan up` a query so you can move up the tasks
-  in the backlog of the project X
-
-* If the desired ord doesn't exist in the config create it
-
-Pending:
-
-* Create the move_down method
-* Create the argparse
-* Create the main directives
-* Update Readme
-* Increase version of setup
-
 ## Sprint goal checker
 
 With this tool you'll set up the maximum value of an uda (such as `est`) and it
