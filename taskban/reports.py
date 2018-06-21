@@ -204,24 +204,47 @@ class KanbanReport(Report):
             out.write('\n\n## {}'.format(state))
             for project in sorted(self.snapshot[state].keys()):
                 dataset = []
+                total_active_time = 0
                 for task in self.snapshot[state][project]:
                     if task['active_time'] > 0 or show_inactive:
                         dataset.append([task['id'],
+                                        task['ov'],
                                         task['est'],
                                         self.seconds_to_readable(
                                             task['active_time']),
                                         task['total_active_percent'],
                                         task['description']])
+                        total_active_time += task['active_time']
                     if len(dataset) == self.config['max_tasks_per_state']:
                         break
+                total_ov = sum([i[1] for i in dataset])
+                total_est = sum([i[2] for i in dataset])
+                from operator import itemgetter
+                sorted_dataset = sorted(dataset, key=itemgetter(5))
+                sorted_dataset.append([
+                    '-----',
+                    '---',
+                    '---',
+                    '--------',
+                    '----',
+                    '----',
+                ])
+                sorted_dataset.append([
+                    'Total',
+                    total_ov,
+                    total_est,
+                    self.seconds_to_readable(total_active_time),
+                    '',
+                    '',
+                ])
                 if len(dataset) > 0:
-                    from operator import itemgetter
                     out.write('\n\n### {}\n\n'.format(project))
                     out.write(
                         tabulate(
-                            sorted(dataset, key=itemgetter(4)),
+                            sorted_dataset,
                             headers=[
                                 'ID',
+                                'OV',
                                 'Est',
                                 'Active',
                                 'Progress %',
