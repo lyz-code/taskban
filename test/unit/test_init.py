@@ -448,7 +448,7 @@ class TestMain(unittest.TestCase):
         main()
         self.assertTrue(taskbanMock.called)
         self.assertEqual(
-            taskbanMock.return_value.move_up.assert_called_with(1),
+            taskbanMock.return_value.move_task_up.assert_called_with(1),
             None,
         )
 
@@ -462,7 +462,7 @@ class TestMain(unittest.TestCase):
         main()
         self.assertTrue(taskbanMock.called)
         self.assertEqual(
-            taskbanMock.return_value.move_down.assert_called_with(1),
+            taskbanMock.return_value.move_task_down.assert_called_with(1),
             None,
         )
 

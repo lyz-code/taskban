@@ -107,9 +107,9 @@ def main():
             project=args.project,
         )
         if args.plan_direction == 'up':
-            report.move_up(args.task_id)
+            report.move_task_up(args.task_id)
         elif args.plan_direction == 'down':
-            report.move_down(args.task_id)
+            report.move_task_down(args.task_id)
 
 
 if __name__ == "__main__":
