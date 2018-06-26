@@ -440,6 +440,10 @@ class PlanningReport(Report):
             config_path,
             data_path,
         )
+        self.backend = tasklib.TaskWarrior(
+            data_location=os.path.expanduser(task_data_path),
+            taskrc_location=os.path.expanduser(taskrc_path),
+        )
         self.get_affected_tasks(task_state, project)
 
     def get_affected_tasks(self, task_state='todo', project=None):
@@ -455,6 +459,10 @@ class PlanningReport(Report):
                 pm=task_state,
                 status='pending',
             )
+        self.tasks = sorted(
+            self.tasks, key=lambda k: k['urgency'],
+            reverse=True,
+        )
 
     def _get_task_position(self, task_id):
         'Get task index inside the self.tasks list for a given task_id'
@@ -465,6 +473,7 @@ class PlanningReport(Report):
 
     def _increase_task_ord(self, task_id, ord_delta):
         '''Method to increase the ord of a desired task'''
+        ord_delta = round(ord_delta, 2)
         task_index = self._get_task_position(task_id)
         if self.tasks[task_index]['ord'] is None:
             self.tasks[task_index]['ord'] = ord_delta
@@ -476,13 +485,16 @@ class PlanningReport(Report):
                 'urgency.uda.ord.{}.coefficient'.format(ord_delta),
             ]
         except KeyError:
-            self.backend.config[
-                'urgency.uda.ord.{}.coefficient'.format(ord_delta)
-            ] = ord_delta
-            self.backend.config[
-                'urgency.uda.ord.{0:06f}.coefficient'.format(ord_delta)
-            ] = ord_delta
-            self.backend.save_config()
+            self.backend.execute_command([
+                'config',
+                'urgency.uda.ord.{}.coefficient'.format(ord_delta),
+                ord_delta,
+            ])
+            self.backend.execute_command([
+                'config',
+                'urgency.uda.ord.{0:06f}.coefficient'.format(ord_delta),
+                ord_delta,
+            ])
 
     def _move_task(self, task_id, direction):
         task_index = self._get_task_position(task_id)
