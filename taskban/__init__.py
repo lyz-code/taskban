@@ -17,7 +17,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import os
-from taskban.reports import KanbanReport, RefinementReport
+from taskban.reports import KanbanReport, RefinementReport, PlanningReport
 from taskban.cli import load_logger, load_parser
 
 
@@ -97,6 +97,19 @@ def main():
                     report.state['project'],
                 ),
             )
+    elif args.subcommand == 'plan':
+        report = PlanningReport(
+            task_data_path=args.task_data_path,
+            taskrc_path=args.taskrc_path,
+            config_path=args.config_path,
+            data_path=args.data_path,
+            task_state=args.task_status,
+            project=args.project,
+        )
+        if args.plan_direction == 'up':
+            report.move_task_up(args.task_id)
+        elif args.plan_direction == 'down':
+            report.move_task_down(args.task_id)
 
 
 if __name__ == "__main__":

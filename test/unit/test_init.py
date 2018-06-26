@@ -437,3 +437,85 @@ class TestMain(unittest.TestCase):
             [call('child', -1), call('sibling', -1), call('parent', -1)],
         )
         self.assertFalse(taskbanMock.return_value.end.called)
+
+    @patch('taskban.load_parser')
+    @patch('taskban.PlanningReport', autospect=True)
+    def test_plan_move_task_up(self, taskbanMock, parserMock):
+        parser = parserMock.return_value.parse_args.return_value
+        parser.subcommand = 'plan'
+        parser.task_id = 1
+        parser.plan_direction = 'up'
+        main()
+        self.assertTrue(taskbanMock.called)
+        self.assertEqual(
+            taskbanMock.return_value.move_task_up.assert_called_with(1),
+            None,
+        )
+
+    @patch('taskban.load_parser')
+    @patch('taskban.PlanningReport', autospect=True)
+    def test_plan_move_task_down(self, taskbanMock, parserMock):
+        parser = parserMock.return_value.parse_args.return_value
+        parser.subcommand = 'plan'
+        parser.task_id = 1
+        parser.plan_direction = 'down'
+        main()
+        self.assertTrue(taskbanMock.called)
+        self.assertEqual(
+            taskbanMock.return_value.move_task_down.assert_called_with(1),
+            None,
+        )
+
+    @patch('taskban.load_parser')
+    @patch('taskban.PlanningReport', autospect=True)
+    def test_plan_move_can_specify_project(self, taskbanMock, parserMock):
+        parser = parserMock.return_value.parse_args.return_value
+        parser.task_data_path = 'task_data'
+        parser.taskrc_path = 'taskrc_path'
+        parser.config_path = 'config_path'
+        parser.data_path = 'data_path'
+        parser.task_status = 'task_state'
+        parser.subcommand = 'plan'
+        parser.task_id = 1
+        parser.plan_direction = 'down'
+        parser.project = 'test'
+        main()
+        self.assertTrue(taskbanMock.called)
+        self.assertEqual(
+            taskbanMock.assert_called_with(
+                task_data_path='task_data',
+                taskrc_path='taskrc_path',
+                config_path='config_path',
+                data_path='data_path',
+                task_state='task_state',
+                project='test',
+            ),
+            None,
+        )
+
+    @patch('taskban.load_parser')
+    @patch('taskban.PlanningReport', autospect=True)
+    def test_plan_move_can_specify_task_status(self, taskbanMock, parserMock):
+        parser = parserMock.return_value.parse_args.return_value
+        parser.task_data_path = 'task_data'
+        parser.taskrc_path = 'taskrc_path'
+        parser.config_path = 'config_path'
+        parser.data_path = 'data_path'
+        parser.task_status = 'backlog'
+        parser.subcommand = 'plan'
+        parser.task_id = 1
+        parser.plan_direction = 'down'
+        parser.project = 'project'
+        main()
+        self.assertTrue(taskbanMock.called)
+        self.assertEqual(
+            taskbanMock.assert_called_with(
+                task_data_path='task_data',
+                taskrc_path='taskrc_path',
+                config_path='config_path',
+                data_path='data_path',
+                task_state='backlog',
+                project='project',
+            ),
+            None,
+        )

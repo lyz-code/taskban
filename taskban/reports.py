@@ -440,3 +440,118 @@ class RefinementReport(Report):
             self.save()
         except KeyError:
             raise
+
+
+class PlanningReport(Report):
+    """Planning report, it will help in the planning of the sprint """
+
+    def __init__(
+        self,
+        start_date='now',
+        task_data_path=None,
+        taskrc_path=None,
+        config_path=None,
+        data_path=None,
+        task_state='todo',
+        project=None,
+    ):
+
+        super(PlanningReport, self).__init__(
+            start_date,
+            task_data_path,
+            taskrc_path,
+            config_path,
+            data_path,
+        )
+        self.backend = tasklib.TaskWarrior(
+            data_location=os.path.expanduser(task_data_path),
+            taskrc_location=os.path.expanduser(taskrc_path),
+        )
+        self.get_affected_tasks(task_state, project)
+
+    def get_affected_tasks(self, task_state='todo', project=None):
+        '''Get all tasks filtered by task_state and possibly by project'''
+        if project is None:
+            self.tasks = self.backend.tasks.filter(
+                pm=task_state,
+                status='pending',
+            )
+        else:
+            self.tasks = self.backend.tasks.filter(
+                project=project,
+                pm=task_state,
+                status='pending',
+            )
+        self.tasks = sorted(
+            self.tasks, key=lambda k: k['urgency'],
+            reverse=True,
+        )
+
+    def _get_task_position(self, task_id):
+        'Get task index inside the self.tasks list for a given task_id'
+        return [
+            index for index, value in enumerate(self.tasks)
+            if value['id'] == task_id
+        ][0]
+
+    def _increase_task_ord(self, task_id, ord_delta):
+        '''Method to increase the ord of a desired task'''
+        ord_delta = round(ord_delta, 2)
+        task_index = self._get_task_position(task_id)
+        if self.tasks[task_index]['ord'] is None:
+            self.tasks[task_index]['ord'] = ord_delta
+        else:
+            self.tasks[task_index]['ord'] += ord_delta
+        self.tasks[task_index].save()
+        try:
+            self.backend.config[
+                'urgency.uda.ord.{}.coefficient'.format(ord_delta),
+            ]
+        except KeyError:
+            self.backend.execute_command([
+                'config',
+                'urgency.uda.ord.{}.coefficient'.format(ord_delta),
+                ord_delta,
+            ])
+            self.backend.execute_command([
+                'config',
+                'urgency.uda.ord.{0:06f}.coefficient'.format(ord_delta),
+                ord_delta,
+            ])
+
+    def _move_task(self, task_id, direction):
+        task_index = self._get_task_position(task_id)
+        if task_index-direction < 0 or \
+                task_index-direction > len(self.tasks) - 1:
+            # If it's on the extremes return
+            return
+
+        urg_delta_to_next_task = (self.tasks[task_index-direction]['urgency'] -
+                                  self.tasks[task_index]['urgency'])
+
+        if task_index-2*direction < 0 or \
+                task_index-2*direction > len(self.tasks) - 1:
+            # If it's one before the last return half the step
+            urg_step_above_next_task = urg_delta_to_next_task/2
+        else:
+            urg_step_above_next_task = (
+                self.tasks[task_index-2*direction]['urgency'] -
+                self.tasks[task_index-direction]['urgency']
+            )/2
+            if abs(urg_step_above_next_task) < self.config['minimum_ord_step']:
+                self._increase_task_ord(
+                    self.tasks[task_index-2*direction]['id'],
+                    2 * direction * self.config['minimum_ord_step'],
+                )
+                urg_step_above_next_task = \
+                    self.config['minimum_ord_step'] * direction
+        self._increase_task_ord(
+            self.tasks[task_index]['id'],
+            urg_delta_to_next_task + urg_step_above_next_task,
+        )
+
+    def move_task_up(self, task_id):
+        self._move_task(task_id, 1)
+
+    def move_task_down(self, task_id):
+        self._move_task(task_id, -1)

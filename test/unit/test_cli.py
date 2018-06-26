@@ -128,6 +128,43 @@ class TestArgparse(unittest.TestCase):
         self.assertEqual(parsed.next_subcommand, 'jump')
         self.assertEqual(parsed.jump_project, 'my-first-project')
 
+    def test_has_subcommand_plan(self):
+        parsed = self.parser.parse_args(['plan', '1', 'up'])
+        self.assertEqual(parsed.subcommand, 'plan')
+
+    def test_subcommand_plan_needs_direction(self):
+        with self.assertRaises(SystemExit):
+            self.parser.parse_args(['plan'])
+
+    def test_subcommand_plan_needs_direction_and_task(self):
+        with self.assertRaises(SystemExit):
+            self.parser.parse_args(['plan', '1'])
+
+    def test_plan_has_subcommand_move_up(self):
+        parsed = self.parser.parse_args(['plan', '1', 'up'])
+        self.assertEqual(parsed.plan_direction, 'up')
+
+    def test_plan_has_subcommand_move_down(self):
+        parsed = self.parser.parse_args(['plan', '1', 'down'])
+        self.assertEqual(parsed.plan_direction, 'down')
+
+    def test_plan_can_specify_pm_value(self):
+        parsed = self.parser.parse_args(
+            ['plan', '--task_status', 'doing', '1', 'up'],
+        )
+        self.assertEqual(parsed.task_status, 'doing')
+
+    def test_plan_has_default_pm_value(self):
+        parsed = self.parser.parse_args(
+            ['plan', '1', 'up'],
+        )
+        self.assertEqual(parsed.task_status, 'todo')
+
+    def test_plan_can_specify_project_value(self):
+        parsed = self.parser.parse_args(
+            ['plan', '--project', 'test', '1', 'up'],
+        )
+        self.assertEqual(parsed.project, 'test')
 
 class TestLogger(unittest.TestCase):
     @patch('taskban.cli.logging')

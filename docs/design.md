@@ -2,7 +2,52 @@ In this document we'll write the design docs for the different features
 
 # Sprint review
 
-## Objectives reports
+## Objectives report
+
+We'll have a new uda `it` called `Item Type` which will be one of:
+* history
+* epic
+* behavior
+* project
+
+The `history` type is the common tasks. `epic` are the tasks that have a meaning
+towards a life objective, those are the ones defined in the objectives.md file
+under project.management. `behaviors` are behaviors that I want to implement or
+I'm implementing. And `project` will be a type of issue managed by taskban to
+set up the priority and ov of the different projects and subprojects.
+
+I've set reports for each of this types so it's cleaner to see them when you
+want to
+
+### Projects
+
+If you change the ov or priority of the projects, taskban will recalculate the
+urgency score and set it up on your config file.
+
+As both history and epics share the project you'll priorize both at the same
+time.
+
+They'll have an uda called `td` (`task_description`) where we'll store the
+information of the task
+
+### Behaviors
+
+At the end of the sprint we'll execute a behavior report, in which the user will
+answer yes or no if they have accomplished the desired behavior (only the ones
+with `pm:todo`), if you have accomplished it, it will reduce it's priority by
+X points and if you haven't it will increase it's importance.
+
+In each sprint you should focus on the Y first behaviors.
+
+### Epics
+
+Epics are a way of organize what you want to do in each project. It's meant to
+be breaking points in them.
+
+Once you've got all set up, you should priorize them, and adjust the project ov
+and pri so they match your desired order.
+
+## Deprecated Objectives reports
 
 We'll create a report that will take a yaml of objectives and return a score of
 completion of the objectives.
@@ -98,13 +143,14 @@ correctly done by sprint
 
 # Sprint planning
 
-## Objectives sync
+## Sprint goal checker
 
-Given the objectives yaml template shown [here](#objectives-report), we need
-a tool that can specify the weights of the
-objective/subobjective/(behaviors|tasks), once we've got them set up maybe in
-the taskban config, will calculate the urgency of each taskwarrior project, the
-urgency factor of `pri`, `ov` and it will set them on the taskwarrior config.
+With this tool you'll set up the maximum value of an uda (such as `est`) and it
+will check if your `todo` + `doing` + `blocked` tasks add up that score.
+
+* It should also be a good idea to select the % of points spent in each project.
+  of the % of each project you should be able to specify the % of the
+  subprojects, and so on.
 
 # Task mangling
 

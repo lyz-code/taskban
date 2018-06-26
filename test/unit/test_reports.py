@@ -6,7 +6,8 @@ import unittest
 import datetime
 import tempfile
 from unittest.mock import patch
-from taskban.reports import RefinementReport, KanbanReport, Report
+from taskban.reports import PlanningReport, RefinementReport, KanbanReport, \
+    Report
 
 
 class TestReport(unittest.TestCase):
@@ -32,6 +33,7 @@ class TestReport(unittest.TestCase):
             'taskrc_path': '~/.taskrc',
             'start_date': '1984-01-01',
             'max_tasks_per_state': 10,
+            'minimum_ord_step': 0.1,
             'available_states': {
                 'todo': 'To Do',
                 'doing': 'Doing',
@@ -551,6 +553,137 @@ class TestRefinementReport(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.report.jump('unexisting-project')
         self.assertFalse(saveMock.called)
+
+
+class TestPlanningReport(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        shutil.rmtree(self.tmp)
+        shutil.copytree('test/data', os.path.join(self.tmp, 'data'))
+        shutil.copytree('test/config', os.path.join(self.tmp, 'config'))
+        self.config_path = os.path.join(self.tmp, 'config')
+        self.data_path = os.path.join(self.tmp, 'data')
+        self.report = PlanningReport(
+            task_data_path=self.data_path,
+            taskrc_path=os.path.join(self.config_path, 'taskrc'),
+            config_path=os.path.join(self.config_path, 'config.yaml'),
+            data_path=self.data_path,
+        )
+        self.state_file = os.path.join(self.data_path, 'refinement.yaml')
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp)
+
+    def test_plan_can_get_affected_tasks(self):
+        self.report.get_affected_tasks('backlog', 'my-first-project')
+        self.assertEqual(len(self.report.tasks), 6)
+        self.assertEqual(self.report.tasks[0]['description'], 'Backlog task 1')
+
+    def test_plan_gets_todo_affected_tasks_by_default(self):
+        self.report.get_affected_tasks()
+        self.assertEqual(len(self.report.tasks), 3)
+        self.assertEqual(self.report.tasks[0]['description'], 'Todo task 3')
+
+    def test_plan_gets_affected_tasks_can_filter_by_pm_only(self):
+        self.report.get_affected_tasks('doing')
+        self.assertEqual(len(self.report.tasks), 2)
+        self.assertEqual(self.report.tasks[0]['description'], 'Doing task 1')
+
+    def test_plan_can_get_task_position(self):
+        self.assertEqual(self.report._get_task_position(6), 2)
+
+    def test_plan_can_increase_ord_of_a_task_without_ord(self):
+        self.report._increase_task_ord(4, 0.1)
+        task = self.report.backend.tasks.get(id=4)
+        self.assertEqual(task['ord'], 0.1)
+
+    def test_plan_can_increase_ord_of_a_task_with_ord(self):
+        self.report.get_affected_tasks('backlog')
+        self.report._increase_task_ord(1, 0.1)
+        task = self.report.backend.tasks.get(id=1)
+        self.assertEqual(task['ord'], 3.1)
+
+    def test_plan_increase_ord_of_a_task_edits_the_taskrc(self):
+        self.report.get_affected_tasks('backlog')
+        self.report._increase_task_ord(1, 0.6)
+        task = self.report.backend.tasks.get(id=1)
+        self.assertEqual(task['ord'], 3.6)
+        with open(self.report.backend.taskrc_location, 'r') as f:
+            config_content = f.read().splitlines()
+            self.assertIn(
+                "urgency.uda.ord.0.6.coefficient=0.6",
+                config_content,
+            )
+            self.assertIn(
+                "urgency.uda.ord.0.600000.coefficient=0.6",
+                config_content,
+            )
+
+    def test_plan_can_move_task_up_with_enough_space(self):
+        self.report.get_affected_tasks('backlog')
+        self.report.move_task_up(3)
+        task = self.report.backend.tasks.get(id=3)
+        self.assertEqual(task['ord'], 2.5)
+        self.assertEqual(round(task['urgency'], 3), 3.5)
+
+    def test_plan_can_move_task_up_without_two_tasks_above_it_half_step(self):
+        self.report.get_affected_tasks('backlog')
+        self.report.move_task_up(2)
+        task = self.report.backend.tasks.get(id=2)
+        self.assertEqual(task['ord'], 3.5)
+        self.assertEqual(round(task['urgency'], 3), 4.5)
+
+    def test_plan_move_up_does_nothing_if_on_top(self):
+        self.report.get_affected_tasks('backlog')
+        self.report.move_task_up(1)
+        task = self.report.backend.tasks.get(id=1)
+        self.assertEqual(task['ord'], 3)
+        self.assertEqual(round(task['urgency'], 3), 4)
+
+    def test_plan_move_up_pads_tasks_above_if_there_is_no_space(self):
+        self.report.move_task_up(6)
+        task1 = self.report.backend.tasks.get(id=4)
+        task2 = self.report.backend.tasks.get(id=5)
+        task3 = self.report.backend.tasks.get(id=6)
+        self.assertEqual(task1['ord'], 0.2)
+        self.assertEqual(round(task1['urgency'], 3), 1.2)
+        self.assertEqual(task2['ord'], None)
+        self.assertEqual(round(task2['urgency'], 3), 1.)
+        self.assertEqual(task3['ord'], 0.1)
+        self.assertEqual(round(task3['urgency'], 3), 1.1)
+
+    def test_plan_can_move_task_down_with_enough_space(self):
+        self.report.get_affected_tasks('backlog')
+        self.report.move_task_down(1)
+        task = self.report.backend.tasks.get(id=1)
+        self.assertEqual(task['ord'], 1.5)
+        self.assertEqual(round(task['urgency'], 3), 2.5)
+
+    def test_plan_can_move_task_down_without_two_tasks_below_it_half_step(self):
+        self.report.get_affected_tasks('doing')
+        self.report.move_task_down(7)
+        task = self.report.backend.tasks.get(id=7)
+        self.assertEqual(task['ord'], -0.75)
+        self.assertEqual(round(task['urgency'], 3), 0.25)
+
+    def test_plan_move_down_does_nothing_if_on_bottom(self):
+        self.report.get_affected_tasks()
+        self.report.move_task_down(6)
+        task = self.report.backend.tasks.get(id=6)
+        self.assertEqual(task['ord'], None)
+        self.assertEqual(round(task['urgency'], 3), 1)
+
+    def test_plan_move_down_pads_tasks_below_if_there_is_no_space(self):
+        self.report.move_task_down(4)
+        task1 = self.report.backend.tasks.get(id=4)
+        task2 = self.report.backend.tasks.get(id=5)
+        task3 = self.report.backend.tasks.get(id=6)
+        self.assertEqual(task1['ord'], -0.1)
+        self.assertEqual(round(task1['urgency'], 3), 0.9)
+        self.assertEqual(task2['ord'], None)
+        self.assertEqual(round(task2['urgency'], 3), 1.)
+        self.assertEqual(task3['ord'], -0.2)
+        self.assertEqual(round(task3['urgency'], 3), 0.8)
 
 
 if __name__ == '__main__':
