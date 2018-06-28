@@ -217,8 +217,8 @@ class KanbanReport(Report):
                         total_active_time += task['active_time']
                     if len(dataset) == self.config['max_tasks_per_state']:
                         break
-                total_ov = sum([i[1] for i in dataset])
-                total_est = sum([i[2] for i in dataset])
+                total_ov = sum([i[1] for i in dataset if i[1] is not None])
+                total_est = sum([i[2] for i in dataset if i[2] is not None])
                 from operator import itemgetter
                 sorted_dataset = sorted(dataset, key=itemgetter(5))
                 sorted_dataset.append([
