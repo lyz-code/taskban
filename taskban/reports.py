@@ -93,13 +93,21 @@ class Report():
         second = seconds % 60
         minute = (seconds // 60) % 60
         hour = (seconds // 3600) % 24
-        # days = (seconds // 86400)
+        days = (seconds // 86400)
 
-        return "{}:{}:{}".format(
-            self._number_to_2_digits(hour),
-            self._number_to_2_digits(minute),
-            self._number_to_2_digits(second),
-        )
+        if days == 0:
+            return "{}:{}:{}".format(
+                self._number_to_2_digits(hour),
+                self._number_to_2_digits(minute),
+                self._number_to_2_digits(second),
+            )
+        else:
+            return "{}:{}:{}:{}".format(
+                self._number_to_2_digits(days),
+                self._number_to_2_digits(hour),
+                self._number_to_2_digits(minute),
+                self._number_to_2_digits(second),
+            )
 
     def _number_to_2_digits(self, n):
         return repr(round(n)).zfill(2)

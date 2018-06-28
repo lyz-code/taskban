@@ -136,6 +136,9 @@ class TestReport(unittest.TestCase):
     def test_report_convert_seconds_to_readable(self):
         self.assertEqual(self.report.seconds_to_readable(6162), '01:42:42')
 
+    def test_report_convert_seconds_to_readable_with_days(self):
+        self.assertEqual(self.report.seconds_to_readable(606162), '07:00:22:42')
+
     def test_save_yaml(self):
         save_file = os.path.join(self.tmp, 'yaml_save_test.yaml')
         dictionary = {'a': 'b', 'c': 'd'}
