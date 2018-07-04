@@ -513,18 +513,24 @@ class PlanningReport(Report):
         self.tasks[task_index].save()
         try:
             self.backend.config[
-                'urgency.uda.ord.{}.coefficient'.format(ord_delta),
+                'urgency.uda.ord.{}.coefficient'.format(
+                    self.tasks[task_index]['ord'],
+                ),
             ]
         except KeyError:
             self.backend.execute_command([
                 'config',
-                'urgency.uda.ord.{}.coefficient'.format(ord_delta),
-                ord_delta,
+                'urgency.uda.ord.{}.coefficient'.format(
+                    self.tasks[task_index]['ord'],
+                ),
+                self.tasks[task_index]['ord'],
             ])
             self.backend.execute_command([
                 'config',
-                'urgency.uda.ord.{0:06f}.coefficient'.format(ord_delta),
-                ord_delta,
+                'urgency.uda.ord.{0:06f}.coefficient'.format(
+                    self.tasks[task_index]['ord'],
+                ),
+                self.tasks[task_index]['ord'],
             ])
 
     def _move_task(self, task_id, direction):

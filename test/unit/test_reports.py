@@ -614,11 +614,11 @@ class TestPlanningReport(unittest.TestCase):
         with open(self.report.backend.taskrc_location, 'r') as f:
             config_content = f.read().splitlines()
             self.assertIn(
-                "urgency.uda.ord.0.6.coefficient=0.6",
+                "urgency.uda.ord.3.6.coefficient=3.6",
                 config_content,
             )
             self.assertIn(
-                "urgency.uda.ord.0.600000.coefficient=0.6",
+                "urgency.uda.ord.3.600000.coefficient=3.6",
                 config_content,
             )
 
