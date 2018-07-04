@@ -1,1 +1,4 @@
+argcomplete==1.9.2
+PyYAML==3.12
+tabulate==0.7.7
 git+https://github.com/lyz-code/tasklib@v0.3.2
